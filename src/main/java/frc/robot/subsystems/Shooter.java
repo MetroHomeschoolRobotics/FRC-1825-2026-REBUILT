@@ -10,7 +10,7 @@ import frc.robot.Constants;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
-import dev.doglog.DogLog;
+
 
 public class Shooter extends SubsystemBase{
     private PIDController pid = new PIDController(0.01,0,0);
