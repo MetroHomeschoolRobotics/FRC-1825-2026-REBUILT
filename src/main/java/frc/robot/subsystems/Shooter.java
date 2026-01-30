@@ -7,9 +7,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 
 public class Shooter extends SubsystemBase{
@@ -17,7 +15,7 @@ public class Shooter extends SubsystemBase{
     
     private double desiredVelocity = 0;
 
-    private SparkMax shooter = new SparkMax(Constants.MotorIDs.shooterMotorID, SparkLowLevel.MotorType.kBrushless);
+    private TalonFX shooter = new TalonFX(Constants.MotorIDs.shooterMotorID);
     
     public Shooter(){
     }
@@ -36,7 +34,7 @@ public class Shooter extends SubsystemBase{
 
     public double getVelocity(){
        
-        return shooter.getEncoder().getVelocity();
+        return shooter.getVelocity().getValueAsDouble();
     }
     public void periodic(){
         double output = pid.calculate(getVelocity());

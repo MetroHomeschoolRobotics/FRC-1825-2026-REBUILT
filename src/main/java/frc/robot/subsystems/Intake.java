@@ -1,13 +1,12 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-    private SparkMax intake = new SparkMax(Constants.MotorIDs.intakeID, SparkLowLevel.MotorType.kBrushless);
+    private TalonFX intake = new TalonFX(Constants.MotorIDs.intakeID);
     public Intake(){}
     public void setSpeed(double speed){
         intake.set(speed);
