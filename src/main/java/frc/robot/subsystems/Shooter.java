@@ -15,16 +15,18 @@ public class Shooter extends SubsystemBase{
     
     private double desiredVelocity = 0;
 
-    private TalonFX shooter = new TalonFX(Constants.MotorIDs.shooterMotorID);
+    private TalonFX shooter1 = new TalonFX(Constants.MotorIDs.shooterMotorID1);
+    private TalonFX shooter2 = new TalonFX(Constants.MotorIDs.shooterMotorID2);
     
     public Shooter(){
     }
 
     public void setSpeed(double speed){
-        shooter.set(speed);
+        shooter1.set(speed);
+        shooter2.set(-speed);
     }
     public void incrementRPM(double joystickInput){
-        desiredVelocity = desiredVelocity + (10*-joystickInput);
+        desiredVelocity = desiredVelocity + (5*-joystickInput);
         pid.setSetpoint(desiredVelocity);
     }
     public void setRPM(double RPM){
@@ -32,12 +34,13 @@ public class Shooter extends SubsystemBase{
         pid.setSetpoint(desiredVelocity);
     }
 
-    public double getVelocity(){
+    public double getRPM(){
        
-        return shooter.getVelocity().getValueAsDouble();
+        return shooter1.getVelocity().getValueAsDouble()*60;
     }
     public void periodic(){
-        double output = pid.calculate(getVelocity());
-        shooter.set(output);
+        double output = pid.calculate(getRPM());
+        setSpeed(output);
+        SmartDashboard.putNumber("ShooterRPM", getRPM());
     }
 }

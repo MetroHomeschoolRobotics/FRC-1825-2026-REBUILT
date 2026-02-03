@@ -7,14 +7,21 @@ import frc.robot.Constants;
 
 //???????????????????????????? Who knows, not me :(
 public class Indexer extends SubsystemBase{
-    private TalonFX indexer = new TalonFX(Constants.MotorIDs.IndexerID);
+    private TalonFX belt = new TalonFX(Constants.MotorIDs.beltID);
+    private TalonFX indexer = new TalonFX(Constants.MotorIDs.indexerID);
     public Indexer(){}
 
-    public void setSpeed(double speed){
+    public void setIndexerSpeed(double speed){
         indexer.set(speed);
+    }
+    public void setBeltSpeed(double speed){
+        belt.set(speed);
     }
     public void stopIndexer(){
         indexer.set(0);
+    }
+    public void stopBelt(){
+        belt.set(0);
     }
 
 }
