@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -52,6 +52,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
+    private boolean hubTrackingEnabled = false;
+    private Pose2d hubPose;
 
      private static final Field2d field = new Field2d();
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
@@ -126,11 +128,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
      * @param modules               Constants for each specific module
      */
+    @SuppressWarnings("unlikely-arg-type")
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
+        
         super(drivetrainConstants, modules);
+        if(DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)){
+            hubPose = Constants.FieldSetpoints.blueHubPose;
+        }else{
+            hubPose = Constants.FieldSetpoints.redHubPose;
+        }
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -219,6 +228,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Field2d getField2d(){
         return field;
     }
+    public void toggleHubTracking(){
+        if(hubTrackingEnabled==true){
+            hubTrackingEnabled=false;
+        }else{
+            hubTrackingEnabled=true;
+        }
+    }
+    public double angleToHub(){
+        return Math.atan((hubPose.getY()-getRobotPose().getY())/(hubPose.getX()-getRobotPose().getX()));
+    }
     public double distanceToPose(Pose2d pose) {
 
         // difference in x and y
@@ -254,6 +273,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
         
+       
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -263,6 +283,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 );
                 m_hasAppliedOperatorPerspective = true;
             });
+        }
+         Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
+        if(hubTrackingEnabled){
+            Turret.turretSetSetpoint(angleToHub());
         }
     }
 

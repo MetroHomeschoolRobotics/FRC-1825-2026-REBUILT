@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
 
 public final class Constants {
     public static class MotorIDs{
@@ -20,6 +21,26 @@ public final class Constants {
     }
     public static class FieldSetpoints{
         // uncomment when the april tag layout is released
+        public static final Pose2d blueHubPose = new Pose2d();
+        public static final Pose2d redHubPose = new Pose2d();
         //public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField();
+    }
+    public static class TimerConstants{
+        //
+        public static final double transitionStart = 140;
+        public static final double shift1Start = 130;
+        public static final double shift2Start = 105;
+        public static final double shift3Start = 80;
+        public static final double shift4Start = 55;
+        public static final double endgameStart = 30;
+        public static final double[] shiftTimes= {
+            transitionStart,
+            shift1Start,
+            shift2Start,
+            shift3Start,
+            shift4Start,
+            endgameStart
+        };
+        
     }
 }
