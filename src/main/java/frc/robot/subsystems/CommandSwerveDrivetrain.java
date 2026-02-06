@@ -2,9 +2,12 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -14,6 +17,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -22,11 +26,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
+import frc.robot.subsystems.vision.TagTracking;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.vision.TagTracking;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -56,6 +63,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Pose2d hubPose;
 
      private static final Field2d field = new Field2d();
+     private final TagTracking FrontLeftCamera = new TagTracking("FrontLeftCamera", Constants.CameraPositions.frontLeftTranslation);
+    private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
+
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
         new SysIdRoutine.Config(
@@ -288,6 +298,48 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub());
         }
+        if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
+           addVisionPose(FrontLeftCamera);
+        }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
+           addVisionPose(FrontRightCamera);
+        }else{
+
+            addVisionPose(FrontRightCamera);
+            addVisionPose(FrontLeftCamera);
+       } 
+        //Object stuff
+            // if(FrontRightCamera.hasTargets()){
+            //     Pose2d objectpose =FrontRightCamera.getObjectPose(getRobotPose());
+            //     SmartDashboard.putNumber("ObjectX", objectpose.getX());
+            //      SmartDashboard.putNumber("ObjectY", objectpose.getY());
+            // }
+
+    }
+      public void addVisionPose(TagTracking camera) {
+        Optional<EstimatedRobotPose> cameraPoseEstimator = camera.getVisionBasedPose();
+        try {
+
+            List<PhotonPipelineResult> targets = camera.getAllUnreadResults();
+
+            if(!targets.isEmpty()){
+                PhotonPipelineResult target = targets.get(targets.size()-1);
+
+                if(target.hasTargets() && target.getBestTarget() != null) {
+                    if(cameraPoseEstimator != null && cameraPoseEstimator.isPresent() && target.getBestTarget().getPoseAmbiguity() < 0.2) {
+                        Pose3d cameraPose = cameraPoseEstimator.get().estimatedPose;
+
+                        // if the apriltag is too far, throw its results away
+                        //if(camera.getApriltagDistance(getRobotPose(), target.getBestTarget().getFiducialId()) > 3) {// TODO test distance tracking
+                            addVisionMeasurement(cameraPose.toPose2d(), Timer.getFPGATimestamp());
+
+                        //}
+                    }
+                }
+            }
+            
+           
+        } catch(Error resultingError) {}
+        
     }
 
     private void startSimThread() {

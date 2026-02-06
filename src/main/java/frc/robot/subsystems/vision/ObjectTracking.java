@@ -9,14 +9,13 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Object extends SubsystemBase {
+public class ObjectTracking extends SubsystemBase {
     private PhotonCamera camera;
  private List<PhotonPipelineResult> results;
  private Transform3d cameraTransform;
-    public Object(String _cameraName, Transform3d _cameraTransform){
+    public ObjectTracking(String _cameraName, Transform3d _cameraTransform){
         camera = new PhotonCamera(_cameraName);
         cameraTransform = _cameraTransform;
         //photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraTransform)
@@ -30,7 +29,7 @@ public class Object extends SubsystemBase {
   
 
   public PhotonPipelineResult getLatestResult() {
-    return camera.getLatestResult(); // TODO remove the depricated function
+    return results.get(results.size()-1); 
   }
   public PhotonTrackedTarget getBestTarget() {
     return getLatestResult().getBestTarget();

@@ -17,14 +17,14 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class AprilTag extends SubsystemBase{
-    //private AprilTagFieldLayout aprilTagFieldLayout = Constants.FieldSetpoints.aprilTagFieldLayout;
+public class TagTracking extends SubsystemBase{
+    private AprilTagFieldLayout aprilTagFieldLayout = Constants.FieldSetpoints.aprilTagFieldLayout;
     private PhotonCamera camera;
     private PhotonPoseEstimator photonPoseEstimator;
  private List<PhotonPipelineResult> results;
-    public AprilTag(String cameraName, Transform3d cameraTransform){
+    public TagTracking(String cameraName, Transform3d cameraTransform){
         camera = new PhotonCamera(cameraName);
-        //photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraTransform)
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraTransform);
     }
     public void periodic(){
         results = camera.getAllUnreadResults();
@@ -35,7 +35,7 @@ public class AprilTag extends SubsystemBase{
   
 
   public PhotonPipelineResult getLatestResult() {
-    return camera.getLatestResult(); // TODO remove the depricated function
+    return results.get(results.size()-1); 
   }
   public PhotonTrackedTarget getBestTarget() {
     return getLatestResult().getBestTarget();
@@ -75,17 +75,17 @@ public Boolean tagOnScreen(){
     return false;
   }
 }
-//   public double getApriltagDistance(Pose2d robotPose, int apriltagID) {
-//     double tagDist = 100000;
-//     if(hasTargets() && getBestTarget() != null) {
+  public double getApriltagDistance(Pose2d robotPose, int apriltagID) {
+    double tagDist = 100000;
+    if(hasTargets() && getBestTarget() != null) {
 
-//       tagDist = PhotonUtils.getDistanceToPose(robotPose, Constants.FieldSetpoints.aprilTagFieldLayout.getTagPose(apriltagID).get().toPose2d());
+      tagDist = PhotonUtils.getDistanceToPose(robotPose, Constants.FieldSetpoints.aprilTagFieldLayout.getTagPose(apriltagID).get().toPose2d());
       
-//     }
+    }
 
-//     return tagDist;
+    return tagDist;
 
-//   }
+  }
 
   public double getPoseAmbiguity() {
     
@@ -98,11 +98,11 @@ public Boolean tagOnScreen(){
     return getBestTarget().getFiducialId();
   }
 
-//   public void getTagPose() {
-//     aprilTagFieldLayout.getTagPose(getApriltagID());
-//   }
+  public void getTagPose() {
+    aprilTagFieldLayout.getTagPose(getApriltagID());
+  }
 
-//   public Optional<EstimatedRobotPose> getVisionBasedPose() {
-//     return photonPoseEstimator.update(getLatestResult());
-//   }
+  public Optional<EstimatedRobotPose> getVisionBasedPose() {
+    return photonPoseEstimator.update(getLatestResult());
+  }
 }

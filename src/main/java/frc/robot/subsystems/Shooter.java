@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.MathUtil;
+
 
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
@@ -39,10 +37,15 @@ public class Shooter extends SubsystemBase{
        
         return shooter1.getVelocity().getValueAsDouble()*60;
     }
+    /**Meters per second **/
+    public double estimatedFuelVelocity(){
+        return (getRPM()*Constants.MathConstants.shooterWheelCircumference)/2;
+    }
    
     public void periodic(){
         double output = pid.calculate(getRPM());
         setSpeed(output);
         SmartDashboard.putNumber("ShooterRPM", getRPM());
+        SmartDashboard.putNumber("Fuel Velocity", estimatedFuelVelocity());
     }
 }
