@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -63,8 +64,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Pose2d hubPose;
 
      private static final Field2d field = new Field2d();
-     private final TagTracking FrontLeftCamera = new TagTracking("FrontLeftCamera", Constants.CameraPositions.frontLeftTranslation);
-    private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
+     private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
+    //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -246,7 +247,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
     public double angleToHub(){
-        return Math.atan((hubPose.getY()-getRobotPose().getY())/(hubPose.getX()-getRobotPose().getX()));
+        double output = Units.radiansToDegrees(Math.atan(
+            (hubPose.getY()-getRobotPose().getY())
+            /
+            (hubPose.getX()-getRobotPose().getX())));
+        if(hubPose.getX()-getRobotPose().getX()<0){
+            output+=180;
+            if(output >180){
+                output -=360;
+            }
+        }
+        return output;
     }
     public double distanceToPose(Pose2d pose) {
 
@@ -298,16 +309,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub());
         }
-        if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
-           addVisionPose(FrontLeftCamera);
-        }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
-           addVisionPose(FrontRightCamera);
-        }else{
+        // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
+        //    addVisionPose(FrontLeftCamera);
+        // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
+        //    addVisionPose(FrontRightCamera);
+        // }else{
 
-            addVisionPose(FrontRightCamera);
+        //     addVisionPose(FrontRightCamera);
             addVisionPose(FrontLeftCamera);
-       } 
-        //Object stuff
+       //} 
+       // Object stuff
             // if(FrontRightCamera.hasTargets()){
             //     Pose2d objectpose =FrontRightCamera.getObjectPose(getRobotPose());
             //     SmartDashboard.putNumber("ObjectX", objectpose.getX());
@@ -329,7 +340,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         Pose3d cameraPose = cameraPoseEstimator.get().estimatedPose;
 
                         // if the apriltag is too far, throw its results away
-                        //if(camera.getApriltagDistance(getRobotPose(), target.getBestTarget().getFiducialId()) > 3) {// TODO test distance tracking
+                        //if(camera.getApriltagDistance(getRobotPose(), target.getBestTarget().getFiducialId()) > 3) {// TO/DO test distance tracking
                             addVisionMeasurement(cameraPose.toPose2d(), Timer.getFPGATimestamp());
 
                         //}
