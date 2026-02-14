@@ -52,6 +52,11 @@ public final class Constants {
     
         
     }
+    public static class InterpolationData{
+        public static final double[] inputs = {0};
+        public static final double[] outputs = {0};//fake data to stop crashes(prolly)
+        //TO/DO populate this
+    }
     public static class CameraPositions {
     public static final Transform3d frontLeftTranslation = new Transform3d(
         Units.inchesToMeters(10.9),
@@ -60,7 +65,7 @@ public final class Constants {
         new Rotation3d(
             Units.degreesToRadians(0),
             Units.degreesToRadians(30),
-            Units.degreesToRadians(0)));
+            Units.degreesToRadians(90)));
 
     public static final Transform3d frontRightTranslation = new Transform3d(
         Units.inchesToMeters(-10.9),

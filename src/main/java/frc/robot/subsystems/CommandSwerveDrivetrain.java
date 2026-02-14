@@ -139,14 +139,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
      * @param modules               Constants for each specific module
      */
-    @SuppressWarnings("unlikely-arg-type")
+   
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         
         super(drivetrainConstants, modules);
-        if(DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)){
+        if(DriverStation.getAlliance().get() == Alliance.Blue){
             hubPose = Constants.FieldSetpoints.blueHubPose;
         }else{
             hubPose = Constants.FieldSetpoints.redHubPose;

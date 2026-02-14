@@ -11,7 +11,7 @@ public class RunIntake extends Command {
     }
     public void initialize(){}
     public void execute(){
-        intake.setIntakeSpeed(0.5);
+        intake.setIntakeSpeed(-0.5);
     }
     public boolean isFinished(){return false;}
     public void end(boolean interrupted){

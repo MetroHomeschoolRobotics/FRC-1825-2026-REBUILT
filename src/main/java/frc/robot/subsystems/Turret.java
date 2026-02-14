@@ -33,9 +33,10 @@ public class Turret extends SubsystemBase {
         }
         public static double getAbsoluteAngle(){
             double output =angle.getAbsolutePosition().getValueAsDouble()*360+robotAngle;
-            if(output>180){
+            //lowk have no idea what to do with this, usually 180/360
+            if(output>270){
                 output-=360;
-            }else if(output<-180){
+            }else if(output<-270){
                 output+=360;
             }
             return output;
