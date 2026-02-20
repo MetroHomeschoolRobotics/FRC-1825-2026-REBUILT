@@ -195,7 +195,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         
         super(drivetrainConstants, modules);
-        if(DriverStation.getAlliance().get() == Alliance.Blue){
+        if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
             hubPose = Constants.FieldSetpoints.blueHubPose;
         }else{
             hubPose = Constants.FieldSetpoints.redHubPose;

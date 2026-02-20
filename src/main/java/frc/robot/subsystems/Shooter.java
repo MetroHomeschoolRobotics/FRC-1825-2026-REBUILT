@@ -14,7 +14,7 @@ public class Shooter extends SubsystemBase{
     private PIDController pid = new PIDController(0.01,0,0);
     
     private double desiredVelocity = 0;
-    private InterpolatingDoubleTreeMap interpolation;
+    private InterpolatingDoubleTreeMap interpolation= new InterpolatingDoubleTreeMap();
     private TalonFX shooter1 = new TalonFX(Constants.MotorIDs.shooterMotorID1);
     private TalonFX shooter2 = new TalonFX(Constants.MotorIDs.shooterMotorID2);
     
