@@ -35,7 +35,10 @@ public class TagTracking extends SubsystemBase{
   
 
   public PhotonPipelineResult getLatestResult() {
+    if(results.size()>0){
     return results.get(results.size()-1); 
+    }
+    return new PhotonPipelineResult();
   }
   public PhotonTrackedTarget getBestTarget() {
     return getLatestResult().getBestTarget();

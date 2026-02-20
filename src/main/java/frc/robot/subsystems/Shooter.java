@@ -53,6 +53,7 @@ public class Shooter extends SubsystemBase{
     }
     /**Meters per second **/
     public double estimatedFuelVelocity(){
+        
         return (getRPM()*Constants.MathConstants.shooterWheelCircumference)/2;
     }
    

@@ -14,8 +14,8 @@ public class RunFullIndexing extends Command {
     }
     public void execute(){
         //TO/DO check rotation directions later
-        indexer.setBeltSpeed(.3);
-        indexer.setIndexerSpeed(.3);
+        indexer.setBeltSpeed(-.3);
+        indexer.setIndexerSpeed(-.3);
     }
     public void end(){
         indexer.stopBelt();

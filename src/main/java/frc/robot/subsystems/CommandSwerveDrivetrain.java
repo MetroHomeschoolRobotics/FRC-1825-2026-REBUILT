@@ -11,14 +11,24 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -54,6 +64,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+
+    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    public SwerveDriveOdometry m_simOdometry = null;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -98,7 +111,43 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             this
         )
     );
+    private void configureAutoBuilder() {
+        
+        try {
+            var config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(
+                () -> getState().Pose,   // Supplier of current robot pose
+                this::resetPose,         // Consumer for seeding pose against auto
+                () -> getState().Speeds, // Supplier of current robot speeds
+                // Consumer of ChassisSpeeds and feedforwards to drive the robot
+                (speeds, feedforwards) -> setControl(
+                    m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                        .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                        .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
+                ),
+                new PPHolonomicDriveController(
+                    // PID constants for translation
+                    new PIDConstants(10, 0, 0),
+                    // PID constants for rotation
+                    new PIDConstants(7, 0, 0)
+                ),
+                config,
+                // Assume the path needs to be flipped for Red vs Blue, this is normally the case
+                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                this // Subsystem for requirements
+            );
+        } catch (Exception ex) {
+            DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
+        }
+    }
+     public Command driveToPose(Pose2d TargetPose, double maxPathSpeed, double maxPathAccel, double maxAngularSpeed, double maxAngularAccel) {
+        PathConstraints constraints = new PathConstraints(
+                maxPathSpeed, maxPathAccel, 
+                Units.degreesToRadians(maxAngularSpeed), 
+                Units.degreesToRadians(maxAngularAccel));
 
+        return AutoBuilder.pathfindToPose(TargetPose, constraints, 0);
+    }
     /*
      * SysId routine for characterizing rotation.
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
@@ -151,6 +200,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }else{
             hubPose = Constants.FieldSetpoints.redHubPose;
         }
+        configureAutoBuilder();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -175,6 +225,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
+        configureAutoBuilder();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -207,6 +258,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+        configureAutoBuilder();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -354,7 +406,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
+         m_lastSimTime = Utils.getCurrentTimeSeconds();
+
+        if (m_simOdometry == null) {
+            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
+            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+            for(int i = 0; i < modules.length; ++i) {
+                positions[i] = modules[i].getCachedPosition();
+            }
+            m_simOdometry = new SwerveDriveOdometry(getKinematics(), Rotation2d.kZero, positions);
+        }
 
         /* Run simulation at a faster rate so PID gains behave more reasonably */
         m_simNotifier = new Notifier(() -> {
@@ -364,10 +425,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
             /* use the measured time delta, get battery voltage from WPILib */
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
+            
+            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
+            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+            for(int i = 0; i < modules.length; ++i) {
+                positions[i] = modules[i].getCachedPosition();
+            }
+            m_simOdometry.update(Rotation2d.fromDegrees(getPigeon2().getYaw().getValue().in(Degrees)), positions);
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+     public void resetPose(Pose2d pose) {
+        super.resetPose(pose);
 
+        if(m_simOdometry != null) {
+            m_simOdometry.resetPose(pose);
+        }
+    }
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
      * while still accounting for measurement noise.
