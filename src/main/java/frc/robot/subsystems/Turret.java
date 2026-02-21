@@ -13,6 +13,9 @@ public class Turret extends SubsystemBase {
         private TalonFX turret = new TalonFX(Constants.MotorIDs.turretMotorID);
         
         private static double robotAngle;
+        private static double rotationCount = 0;
+        private static int rotationCountInt = 0;
+    
         
         private static PIDController pid = new PIDController(0.001, 0, 0);
         public Turret(){
@@ -31,21 +34,45 @@ public class Turret extends SubsystemBase {
         public static void setRobotAngle(double angle){
             robotAngle = angle;
         }
-        public static double getAbsoluteAngle(){
-            double output =angle.getAbsolutePosition().getValueAsDouble()*360+robotAngle;
-            //lowk have no idea what to do with this, usually 180/360
-            if(output>270){
-                output-=360;
-            }else if(output<-270){
+        /**use the cancoder position with the 10:1 gear ratio to get the actual angle,
+         * it also adds the robot angle
+         * 
+         * 
+         */
+        public double getGearedAngle(){
+            //360/10 cuz gear ratios 
+            double output = angle.getAbsolutePosition().getValueAsDouble()*36;
+            // if(output>18){
+            //     output-=36;
+            // }else if(output<-18){
+            //     output+=36;
+            // }
+            output+=rotationCountInt*36;
+            return output+robotAngle;
+
+        }
+    //     public static double getAbsoluteAngle(){
+    //         double output =angle.getAbsolutePosition().getValueAsDouble()*360;
+           
+    //         if(output>180){
+    //             output-=360;
+    //             // rotationCount+=0.5;
+    //         }else if(output<-180){
                 
-                output+=360;
-            }
-            return output;
-    }
+    //             output+=360;
+    //             // rotationCount-=0.5;
+    //         }
+    //         return output;
+    // }
 
     public void periodic(){
-        double output = pid.calculate(getAbsoluteAngle());
+        //DOES THIS WORK, IDK
+       rotationCount=angle.getPosition().getValueAsDouble();
+       rotationCountInt= (int) rotationCount;
+       
+        double output = pid.calculate(getGearedAngle());
         turret.set(output);
+
     }
 
 
