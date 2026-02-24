@@ -11,7 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 
 public class Shooter extends SubsystemBase{
-    private PIDController pid = new PIDController(0.01,0,0);
+    private PIDController pid = new PIDController(0.0011,0.0002,0);
     
     private double desiredVelocity = 0;
     private InterpolatingDoubleTreeMap interpolation= new InterpolatingDoubleTreeMap();
@@ -54,7 +54,7 @@ public class Shooter extends SubsystemBase{
     /**Meters per second **/
     public double estimatedFuelVelocity(){
         
-        return (getRPM()*Constants.MathConstants.shooterWheelCircumference)/2;
+        return ((getRPM()*Constants.MathConstants.shooterWheelCircumference)/60)/2;
     }
    
     public void periodic(){

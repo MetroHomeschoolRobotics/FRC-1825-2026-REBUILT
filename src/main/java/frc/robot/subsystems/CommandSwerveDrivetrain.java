@@ -74,6 +74,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     private boolean hubTrackingEnabled = false;
+    private boolean passingModeEnabled = false;
     private Pose2d hubPose;
 
      private static final Field2d field = new Field2d();
@@ -298,7 +299,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             hubTrackingEnabled=true;
         }
     }
+    public void togglePassingMode(){
+        if(passingModeEnabled==true){
+            passingModeEnabled=false;
+        }else{
+            passingModeEnabled=true;
+        }
+    }
     public double angleToHub(){
+        
         double output = Units.radiansToDegrees(Math.atan(
             (hubPose.getY()-getRobotPose().getY())
             /
@@ -335,7 +344,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
-
+    public Alliance getAlliance(){
+        return DriverStation.getAlliance().orElse(Alliance.Red);
+    }
     @Override
     public void periodic() {
         /*
@@ -360,6 +371,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub());
+        }
+        if(passingModeEnabled){
+            if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
+                Turret.turretSetSetpoint(0);
+            }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
+            Turret.turretSetSetpoint(180);
         }
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);
