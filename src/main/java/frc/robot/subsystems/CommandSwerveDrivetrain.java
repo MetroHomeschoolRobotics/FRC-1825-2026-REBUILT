@@ -15,8 +15,14 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -81,6 +87,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     private boolean hubTrackingEnabled = false;
+    private boolean passingModeEnabled = false;
     private Pose2d hubPose;
 
      private static final Field2d field = new Field2d();
@@ -118,7 +125,36 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             this
         )
     );
-
+    private void configureAutoBuilder() {
+        
+        try {
+            var config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(
+                () -> getState().Pose,   // Supplier of current robot pose
+                this::resetPose,         // Consumer for seeding pose against auto
+                () -> getState().Speeds, // Supplier of current robot speeds
+                // Consumer of ChassisSpeeds and feedforwards to drive the robot
+                (speeds, feedforwards) -> setControl(
+                    m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                        .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                        .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
+                ),
+                new PPHolonomicDriveController(
+                    // PID constants for translation
+                    new PIDConstants(10, 0, 0),
+                    // PID constants for rotation
+                    new PIDConstants(7, 0, 0)
+                ),
+                config,
+                // Assume the path needs to be flipped for Red vs Blue, this is normally the case
+                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                this // Subsystem for requirements
+            );
+        } catch (Exception ex) {
+            DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
+        }
+    }
+  
     /*
      * SysId routine for characterizing rotation.
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
@@ -201,6 +237,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
+        configureAutoBuilder();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -275,7 +312,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             hubTrackingEnabled=true;
         }
     }
+    public void togglePassingMode(){
+        if(passingModeEnabled==true){
+            passingModeEnabled=false;
+        }else{
+            passingModeEnabled=true;
+        }
+    }
     public double angleToHub(){
+        
         double output = Units.radiansToDegrees(Math.atan(
             (hubPose.getY()-getRobotPose().getY())
             /
@@ -341,6 +386,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub());
         }
+        if(passingModeEnabled){
+            if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
+                Turret.turretSetSetpoint(0);
+            }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
+            Turret.turretSetSetpoint(180);
+        }
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);
         // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
@@ -360,35 +411,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
    
 
-     private void configureAutoBuilder() {
-        
-        try {
-            var config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(
-                () -> getState().Pose,   // Supplier of current robot pose
-                this::resetPose,         // Consumer for seeding pose against auto
-                () -> getState().Speeds, // Supplier of current robot speeds
-                // Consumer of ChassisSpeeds and feedforwards to drive the robot
-                (speeds, feedforwards) -> setControl(
-                    m_pathApplyRobotSpeeds.withSpeeds(speeds)
-                        .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                        .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
-                ),
-                new PPHolonomicDriveController(
-                    // PID constants for translation
-                    new PIDConstants(10, 0, 0),
-                    // PID constants for rotation
-                    new PIDConstants(7, 0, 0)
-                ),
-                config,
-                // Assume the path needs to be flipped for Red vs Blue, this is normally the case
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                this // Subsystem for requirements
-            );
-        } catch (Exception ex) {
-            DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
-        }
-    }
+     
 
       public void addVisionPose(TagTracking camera) {
         
@@ -419,6 +442,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private void startSimThread() {
          m_lastSimTime = Utils.getCurrentTimeSeconds();
+         m_lastSimTime = Utils.getCurrentTimeSeconds();
+
+        if (m_simOdometry == null) {
+            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
+            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+            for(int i = 0; i < modules.length; ++i) {
+                positions[i] = modules[i].getCachedPosition();
+            }
+            m_simOdometry = new SwerveDriveOdometry(getKinematics(), Rotation2d.kZero, positions);
+        }
 
         if (m_simOdometry == null) {
             SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
@@ -440,6 +473,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             
             SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
             SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+            for(int i = 0; i < modules.length; ++i) {
+                positions[i] = modules[i].getCachedPosition();
+            }
+            m_simOdometry.update(Rotation2d.fromDegrees(getPigeon2().getYaw().getValue().in(Degrees)), positions);
+            
+            
+            
             for(int i = 0; i < modules.length; ++i) {
                 positions[i] = modules[i].getCachedPosition();
             }
