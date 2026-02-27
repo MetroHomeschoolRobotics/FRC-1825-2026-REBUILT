@@ -24,13 +24,19 @@ public final class Constants {
         public static final double hoodRotationsPerDegree=1.0;
         public static final double defaultHoodAngle = 58.337;
 
-        public static final double shooterWheelRadius = Units.inchesToMeters(4);
+        public static final double shooterWheelRadius = Units.inchesToMeters(4/2);//diameter/2
         public static final double shooterWheelCircumference = 2*Math.PI*shooterWheelRadius;
     }
     public static class FieldSetpoints{
-        // uncomment when the april tag layout is released
-        public static final Pose2d blueHubPose = new Pose2d();
-        public static final Pose2d redHubPose = new Pose2d();
+      
+        public static final Pose2d blueHubPose = new Pose2d(Units.inchesToMeters(144.19),Units.inchesToMeters(181.5), null);
+        public static final Pose2d redHubPose = new Pose2d(Units.inchesToMeters(464.62),Units.inchesToMeters(181.5), null);
+        
+         public static final double blueAllianceZoneX= Units.inchesToMeters(144.19);
+        public static final double redAllianceZoneX = Units.inchesToMeters(464.63);
+        public static final double upperYValue = Units.inchesToMeters(181.5+29);
+        public static final double lowerYValue = Units.inchesToMeters(181.5-29);
+        
         public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     }
     public static class TimerConstants{
@@ -60,21 +66,21 @@ public final class Constants {
     public static class CameraPositions {
     public static final Transform3d frontLeftTranslation = new Transform3d(
         Units.inchesToMeters(10.9),
-        Units.inchesToMeters(10.8), // 11.29
+        Units.inchesToMeters(-10.8), // 11.29
         Units.inchesToMeters(9.321819),
         new Rotation3d(
             Units.degreesToRadians(0),
             Units.degreesToRadians(30),
             Units.degreesToRadians(90)));
 
-    public static final Transform3d frontRightTranslation = new Transform3d(
-        Units.inchesToMeters(-10.9),
-        Units.inchesToMeters(10.8), // -11.29
-        Units.inchesToMeters(9.2),
-        new Rotation3d(
-            Units.degreesToRadians(0),
-            Units.degreesToRadians(0),
-            Units.degreesToRadians(0)));
+//     public static final Transform3d frontRightTranslation = new Transform3d(
+//         Units.inchesToMeters(-10.9),
+//         Units.inchesToMeters(10.8), // -11.29
+//         Units.inchesToMeters(9.2),
+//         new Rotation3d(
+//             Units.degreesToRadians(0),
+//             Units.degreesToRadians(0),
+//             Units.degreesToRadians(0)));
                                                               
-  }
-}
+   }
+ }

@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -17,8 +18,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IncrementShooterRPM;
+import frc.robot.commands.IncrementTurretAngle;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetShooterRPM;
+import frc.robot.commands.SetTurretAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -45,9 +48,9 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     public final Shooter shooter = new Shooter();
 
+    public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
-
-    public RobotContainer() {
+       public RobotContainer() {
         configureBindings();
     }
 
@@ -70,7 +73,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        driverXbox.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        //driverXbox.a().whileTrue(drivetrain.applyRequest(() -> brake));
         driverXbox.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-driverXbox.getLeftY(), -driverXbox.getLeftX()))
         ));
@@ -84,15 +87,18 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         driverXbox.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
+        driverXbox.rightBumper().whileTrue(new SetShooterRPM(shooter, 3000));
         drivetrain.registerTelemetry(logger::telemeterize);
-
-
+        driverXbox.y().whileTrue( drivetrain.driveToPose(new Pose2d(0,0,new Rotation2d(0)),2, 2,180,360));
+        driverXbox.x().onTrue(new SetTurretAngle(turret, 200));
+        driverXbox.a().whileTrue(new SetTurretAngle(turret, 170));
         manipulatorXbox.a().whileTrue(new RunIntake(intake));
         manipulatorXbox.b().whileTrue(new SetShooterRPM(shooter, 0));
+        manipulatorXbox.leftStick().whileTrue(new SetTurretAngle(turret,manipulatorXbox.getLeftX()*180));
+        
         
     CommandScheduler.getInstance().setDefaultCommand(shooter, incrementShooterRPM );
-
+    CommandScheduler.getInstance().setDefaultCommand(turret, incrementTurretAngle);
     }
 
     public Command getAutonomousCommand() {
@@ -112,5 +118,9 @@ public class RobotContainer {
             // Finally idle for the rest of auton
             drivetrain.applyRequest(() -> idle)
         );
+    }
+
+    public void periodic() {
+       
     }
 }
