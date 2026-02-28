@@ -20,10 +20,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.SetTurretAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -47,6 +49,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Intake intake = new Intake();
     public final Shooter shooter = new Shooter();
+    public final Hood hood = new Hood();
 
     public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
@@ -95,7 +98,7 @@ public class RobotContainer {
         manipulatorXbox.a().whileTrue(new RunIntake(intake));
         manipulatorXbox.b().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.leftStick().whileTrue(new SetTurretAngle(turret,manipulatorXbox.getLeftX()*180));
-        
+        manipulatorXbox.y().whileTrue(new SetHoodAngle(hood, 50));
         
     CommandScheduler.getInstance().setDefaultCommand(shooter, incrementShooterRPM );
     CommandScheduler.getInstance().setDefaultCommand(turret, incrementTurretAngle);

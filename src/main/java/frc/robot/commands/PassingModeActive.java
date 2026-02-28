@@ -21,7 +21,7 @@ public class PassingModeActive extends Command {
         addRequirements(_drivetrain);
     }
     public void initialize(){
-       
+       drivetrain.togglePassingMode();
         if(drivetrain.getAlliance() == Alliance.Red){
             allianceLine=Constants.FieldSetpoints.redAllianceZoneX;
             poseHigher = false;
@@ -50,8 +50,8 @@ public class PassingModeActive extends Command {
         }
             
     }
-    public void end(){
-        
+    public void end(boolean interrupted){
+        drivetrain.togglePassingMode();
     }
     public boolean isFinished(){
         return false;
