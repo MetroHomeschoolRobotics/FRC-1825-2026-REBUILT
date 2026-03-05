@@ -20,13 +20,13 @@ public class Hood extends SubsystemBase {
     //TO/DO fix the magic numbers here
     private Spark hood1 = new Spark(1);
     
-    private CANdi canDi= new CANdi(0); 
-
+    private CANdi CANDi= new CANdi(0); 
+    
     private Spark hood2 = new Spark(2);
     private PIDController pid = new PIDController(.01, 0, 0);
 
     private PWMSim hood1Sim = new PWMSim(Constants.MotorIDs.hoodID1);
-    private CANdiSimState CANdiSim = new CANdiSimState(canDi);
+    private CANdiSimState CANdiSim = new CANdiSimState(CANDi);
 
     private static final double kSimLoopPeriod = 0.002; // 2 ms
     private Notifier simNotifier = null;
@@ -44,7 +44,7 @@ public class Hood extends SubsystemBase {
         
     }
     public double getAngle(){
-        return Constants.MathConstants.defaultHoodAngle-(canDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
+        return Constants.MathConstants.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
         ;
     }
     

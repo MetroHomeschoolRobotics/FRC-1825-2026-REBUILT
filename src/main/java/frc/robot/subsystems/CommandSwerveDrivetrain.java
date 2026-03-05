@@ -305,6 +305,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Field2d getField2d(){
         return field;
     }
+    public void neutralTurretMode(){
+        hubTrackingEnabled= false;
+        passingModeEnabled = false;
+    }
+    public void hubTurretMode(){
+        hubTrackingEnabled = true;
+        passingModeEnabled = false;
+    }
+    public void passingTurretMode(){
+        hubTrackingEnabled = false;
+        passingModeEnabled = true;
+    }
     public void toggleHubTracking(){
         if(hubTrackingEnabled==true){
             hubTrackingEnabled=false;
@@ -385,8 +397,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub());
-        }
-        if(passingModeEnabled){
+        }else if(passingModeEnabled){
             if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
                 Turret.turretSetSetpoint(0);
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)

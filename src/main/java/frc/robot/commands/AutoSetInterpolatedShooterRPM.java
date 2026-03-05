@@ -7,11 +7,11 @@ import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
-public class SetInterpolatedShooterRPM extends Command {
+public class AutoSetInterpolatedShooterRPM extends Command {
     private CommandSwerveDrivetrain drivetrain;
     private Shooter shooter;
 
-    public SetInterpolatedShooterRPM(CommandSwerveDrivetrain _drivetrain, Shooter _shooter){
+    public AutoSetInterpolatedShooterRPM(CommandSwerveDrivetrain _drivetrain, Shooter _shooter){
         drivetrain = _drivetrain;
         shooter = _shooter;
 
@@ -29,7 +29,7 @@ public class SetInterpolatedShooterRPM extends Command {
     }
     
     public boolean isFinished(){
-        return shooter.atSetpoint();
+       return false;
     }
 
     public void end(boolean interrupted){}

@@ -59,8 +59,21 @@ public final class Constants {
         
     }
     public static class InterpolationData{
-        public static final double[] inputs = {0};
-        public static final double[] outputs = {0};//fake data to stop crashes(prolly)
+        //Fake data made using a trajectory calculator
+        public static final double[] inputs = {
+            Units.inchesToMeters(90.62),//0
+            Units.inchesToMeters(120.62),//1
+            Units.inchesToMeters(140),//2
+            Units.inchesToMeters(159.59),//3
+            Units.inchesToMeters(213.1)//4
+        };
+        public static final double[] outputs = {
+            2475,//0
+            2635,//1
+            2750,//2
+            2910,//3
+            3265//4
+        };
         //TO/DO populate this
     }
     public static class CameraPositions {

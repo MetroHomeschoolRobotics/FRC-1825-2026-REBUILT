@@ -70,7 +70,7 @@ public class Turret extends SubsystemBase {
             
         }
         public static void setRobotAngle(double angle){
-            robotAngle = angle;
+            robotAngle = angle+90;
         }
         /**use the cancoder position with the 10:1 gear ratio to get the actual angle,
          * it also adds the robot angle

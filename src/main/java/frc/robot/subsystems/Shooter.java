@@ -30,7 +30,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 
 public class Shooter extends SubsystemBase{
-    private PIDController pid = new PIDController(0.0011,0.0002,0.00000);
+    private PIDController pid = new PIDController(0.0017,0.0009,0.0012);
     
     private double desiredVelocity = 0;
     private InterpolatingDoubleTreeMap interpolation = new InterpolatingDoubleTreeMap();
@@ -95,6 +95,7 @@ public class Shooter extends SubsystemBase{
         setSpeed(output);
         SmartDashboard.putNumber("ShooterRPM", getRPM());
         SmartDashboard.putNumber("Fuel Velocity", estimatedFuelVelocity());
+        
         
     }
     public void simulationPeriodic(){
