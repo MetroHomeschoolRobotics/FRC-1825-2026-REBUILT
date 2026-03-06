@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.numbers.N1;
@@ -14,8 +15,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-    private TalonFX intake = new TalonFX(Constants.MotorIDs.intakeID);
-    private TalonFX intakeRetractor = new TalonFX(Constants.MotorIDs.intakeRetractorID);
+    private CANBus canbus = new CANBus("*");
+    private TalonFX intake = new TalonFX(Constants.MotorIDs.intakeID,canbus);
+    private TalonFX intakeRetractor = new TalonFX(Constants.MotorIDs.intakeRetractorID,canbus);
     private Mechanism2d intake2d = new Mechanism2d(Units.inchesToMeters(20), Units.inchesToMeters(4));
    
     private final DCMotor TopIndexDCMotors = DCMotor.getKrakenX60Foc(1);

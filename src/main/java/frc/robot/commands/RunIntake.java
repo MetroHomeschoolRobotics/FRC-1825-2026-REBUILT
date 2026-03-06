@@ -6,7 +6,8 @@ import frc.robot.Constants;
 
 public class RunIntake extends Command {
     private Intake intake;
-    public RunIntake(Intake _intake){
+    public 
+    RunIntake(Intake _intake){
         addRequirements(_intake);
         intake=_intake;
     }
