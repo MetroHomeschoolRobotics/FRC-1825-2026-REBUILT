@@ -37,15 +37,15 @@ public class PassingModeActive extends Command {
             if(pose.getX()>allianceLine&&
              !(pose.getY()>Constants.FieldSetpoints.lowerYValue&&
              pose.getY()<Constants.FieldSetpoints.upperYValue)){
-                indexer.setBeltSpeed(-.3);
-                indexer.setIndexerSpeed(-.3);
+                indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
+                indexer.setIndexerSpeed(Constants.Setpoints.indexerSpeed);
             }
         }else if (poseHigher==false){
             if(pose.getX()<allianceLine&&
              !(pose.getY()>Constants.FieldSetpoints.lowerYValue&&
              pose.getY()<Constants.FieldSetpoints.upperYValue)){
-                indexer.setBeltSpeed(-.3);
-                indexer.setIndexerSpeed(-.3);
+                indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
+                indexer.setIndexerSpeed(Constants.Setpoints.indexerSpeed);
             }
         }
             
