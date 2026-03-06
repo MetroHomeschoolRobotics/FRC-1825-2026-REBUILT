@@ -30,7 +30,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 
 public class Shooter extends SubsystemBase{
-    private PIDController pid = new PIDController(0.0017,0.0009,0.0012);
+    private PIDController pid = new PIDController(Constants.PIDConstants.shooterP,Constants.PIDConstants.shooterI,Constants.PIDConstants.shooterD);
     
     private double desiredVelocity = 0;
     private InterpolatingDoubleTreeMap interpolation = new InterpolatingDoubleTreeMap();

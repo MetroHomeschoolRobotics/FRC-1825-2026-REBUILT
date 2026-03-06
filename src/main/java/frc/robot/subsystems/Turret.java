@@ -38,7 +38,7 @@ public class Turret extends SubsystemBase {
         private static int rotationCountInt = 0;
     
         
-        private static PIDController pid = new PIDController(0.0007,.00, 0.00);
+        private static PIDController pid = new PIDController(Constants.PIDConstants.turretP,Constants.PIDConstants.turretI, Constants.PIDConstants.turretD);
 
          private final Mechanism2d leaderMotorMech2d = new Mechanism2d(2, 2);
     private final MechanismLigament2d leaderMotorFlywheelMech2d = leaderMotorMech2d.getRoot("Flywheel Root leaderMotor", 1, 1)

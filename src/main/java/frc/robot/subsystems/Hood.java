@@ -23,7 +23,7 @@ public class Hood extends SubsystemBase {
     private CANdi CANDi= new CANdi(0); 
     
     private Spark hood2 = new Spark(2);
-    private PIDController pid = new PIDController(.01, 0, 0);
+    private PIDController pid = new PIDController(Constants.PIDConstants.hoodP, Constants.PIDConstants.hoodI, Constants.PIDConstants.hoodD);
 
     private PWMSim hood1Sim = new PWMSim(Constants.MotorIDs.hoodID1);
     private CANdiSimState CANdiSim = new CANdiSimState(CANDi);
