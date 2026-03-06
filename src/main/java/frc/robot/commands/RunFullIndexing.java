@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Indexer;
+import frc.robot.Constants;
 
 public class RunFullIndexing extends Command {
     private Indexer indexer;
@@ -14,8 +15,8 @@ public class RunFullIndexing extends Command {
     }
     public void execute(){
         //TO/DO check rotation directions later
-        indexer.setBeltSpeed(-.3);
-        indexer.setIndexerSpeed(-.3);
+        indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
+        indexer.setIndexerSpeed(Constants.Setpoints.indexerSpeed);
     }
     public void end(){
         indexer.stopBelt();

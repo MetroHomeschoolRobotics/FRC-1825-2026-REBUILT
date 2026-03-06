@@ -112,8 +112,8 @@ public class RobotContainer {
         driverXbox.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer)));
-        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain,"Hub").andThen(new SetHoodAngle(hood, 58.377)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter)));
-        manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, "Passing").andThen(new SetHoodAngle(hood, 45)));
+        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain,"Hub").andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter)));
+        manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, "Passing").andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, "Neutral"));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
