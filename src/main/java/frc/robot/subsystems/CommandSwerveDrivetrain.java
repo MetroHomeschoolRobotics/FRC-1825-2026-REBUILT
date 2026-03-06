@@ -393,7 +393,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        
+        field.setRobotPose(getRobotPose());
         SmartDashboard.putData("Field",getField2d());
+        
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub());

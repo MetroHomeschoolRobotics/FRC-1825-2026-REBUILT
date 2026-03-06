@@ -29,8 +29,8 @@ public final class Constants {
     }
     public static class FieldSetpoints{
       
-        public static final Pose2d blueHubPose = new Pose2d(Units.inchesToMeters(144.19),Units.inchesToMeters(181.5), null);
-        public static final Pose2d redHubPose = new Pose2d(Units.inchesToMeters(464.62),Units.inchesToMeters(181.5), null);
+        public static final Pose2d blueHubPose = new Pose2d(Units.inchesToMeters(181.56),Units.inchesToMeters(158), null);
+        public static final Pose2d redHubPose = new Pose2d(Units.inchesToMeters(469.62),Units.inchesToMeters(158), null);
         
          public static final double blueAllianceZoneX= Units.inchesToMeters(144.19);
         public static final double redAllianceZoneX = Units.inchesToMeters(464.63);
