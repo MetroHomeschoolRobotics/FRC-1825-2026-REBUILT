@@ -72,7 +72,7 @@ public final class Constants {
         public static final double retractorRetractSpeed = 0.4;
         public static final double indexerSpeed = 0.3;
         public static final double beltSpeed = 0.3;
-        public static final double intakeSpeed = -0.5;
+        public static final double intakeSpeed = 0.5;
     }   
     public static class InterpolationData{
         //Fake data made using a trajectory calculator
