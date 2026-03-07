@@ -11,14 +11,21 @@ public final class Constants {
     public static class MotorIDs{
         public static final int shooterMotorID1 = 14;
         public static final int shooterMotorID2 = 15;
+
         public static final int intakeID = 16;
         public static final int intakeRetractorID = 17;
+        public static final int intakeCANcoderID = 26;
+
         public static final int indexerID = 18;
         public static final int beltID = 19;
+
         public static final int turretMotorID = 20;
-        public static final int turretCANID=22;
-        public static final int hoodID1=23;
-        public static final int hoodID2=24;
+        public static final int turretCANcoderID=22;
+
+        public static final int hoodID1=0;
+        public static final int hoodID2=1;//PWM channels
+
+        public static final int CANDiId = 25;
     }
     public static class MathConstants{
         public static final double hoodRotationsPerDegree=1.0;
@@ -90,12 +97,12 @@ public final class Constants {
         public static final double hoodI =0;
         public static final double hoodD =0;
 
-        public static final double shooterP = 0.0017;
-        public static final double shooterI = 0.0009;
-        public static final double shooterD= 0.0012;
+        public static final double shooterP = 0.0019;
+        public static final double shooterI = 0.0012;
+        public static final double shooterD= 0.0014;
         
-        public static final double turretP = 0.0007;
-        public static final double turretI = 0;
+        public static final double turretP = 0.0009;
+        public static final double turretI = 0.000;
         public static final double turretD = 0;
     }
     public static class CameraPositions {

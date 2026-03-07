@@ -18,11 +18,11 @@ import frc.robot.Constants;
 
 public class Hood extends SubsystemBase {
     //TO/DO fix the magic numbers here
-    private Spark hood1 = new Spark(1);
     
-    private CANdi CANDi= new CANdi(0); 
     
-    private Spark hood2 = new Spark(2);
+    private CANdi CANDi= new CANdi(Constants.MotorIDs.CANDiId); 
+    private Spark hood1 = new Spark(Constants.MotorIDs.hoodID1);
+    private Spark hood2 = new Spark(Constants.MotorIDs.hoodID2);
     private PIDController pid = new PIDController(Constants.PIDConstants.hoodP, Constants.PIDConstants.hoodI, Constants.PIDConstants.hoodD);
 
     private PWMSim hood1Sim = new PWMSim(Constants.MotorIDs.hoodID1);

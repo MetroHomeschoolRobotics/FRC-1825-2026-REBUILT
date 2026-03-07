@@ -23,7 +23,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -37,6 +39,8 @@ public class Shooter extends SubsystemBase{
     private TalonFX shooter1 = new TalonFX(Constants.MotorIDs.shooterMotorID1);
     private TalonFX shooter2 = new TalonFX(Constants.MotorIDs.shooterMotorID2);
     
+    private TalonFXConfiguration config = new TalonFXConfiguration();
+
     private final Mechanism2d leaderMotorMech2d = new Mechanism2d(2, 2);
     private final MechanismLigament2d leaderMotorFlywheelMech2d = leaderMotorMech2d.getRoot("Flywheel Root leaderMotor", 1, 1)
         .append(new MechanismLigament2d("Flywheel leaderMotor", 1, 0));
@@ -51,6 +55,9 @@ public class Shooter extends SubsystemBase{
     private Notifier simNotifier = null;
     private double lastSimTime = 0.0;
     public Shooter(){
+        setConfigs();
+        shooter1.getConfigurator().apply(config);
+        shooter2.getConfigurator().apply(config);
         pid.setTolerance(50);
          double[] inputs = Constants.InterpolationData.inputs;
          double[] outputs = Constants.InterpolationData.outputs;
@@ -58,6 +65,10 @@ public class Shooter extends SubsystemBase{
             interpolation.put(inputs[i], outputs[i]);
         } 
         startSimThread();
+    }
+    private void setConfigs(){
+        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public double getInterpolatedRPM(double distToHub){
         double targetRPM = interpolation.get(distToHub);

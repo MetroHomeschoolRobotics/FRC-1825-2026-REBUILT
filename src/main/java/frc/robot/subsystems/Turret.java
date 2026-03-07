@@ -3,10 +3,13 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -30,13 +33,14 @@ import frc.robot.Constants;
 import frc.robot.commands.driveToPose;
 
 public class Turret extends SubsystemBase {
-    private static CANcoder angle = new CANcoder(Constants.MotorIDs.turretCANID);
-        private TalonFX turret = new TalonFX(Constants.MotorIDs.turretMotorID);
+    
+    private static CANcoder angle = new CANcoder(Constants.MotorIDs.turretCANcoderID,"*");
+        private TalonFX turret = new TalonFX(Constants.MotorIDs.turretMotorID,"*");
         private DigitalInput beambreak = new DigitalInput(0);
         private static double robotAngle;
         private static double rotationCount = 0;
         private static int rotationCountInt = 0;
-    
+        private TalonFXConfiguration config = new TalonFXConfiguration();
         
         private static PIDController pid = new PIDController(Constants.PIDConstants.turretP,Constants.PIDConstants.turretI, Constants.PIDConstants.turretD);
 
@@ -58,7 +62,13 @@ public class Turret extends SubsystemBase {
     private double lastSimTime = 0.0;
         public Turret(){
             startSimThread();
+            setConfigs();
+            turret.getConfigurator().apply(config);
         }
+        private void setConfigs(){
+        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
+    }
         public static void turretSetSetpoint(double setpoint){
             if(setpoint>180){
                 setpoint-=360;

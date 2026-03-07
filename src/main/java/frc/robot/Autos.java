@@ -3,6 +3,7 @@ package frc.robot;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import choreo.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ChangeTurretMode;
@@ -51,6 +52,30 @@ public class Autos {
             );
 
 
+        return routine;
+    }
+    public AutoRoutine leftAuto(){
+        AutoRoutine routine = factory.newRoutine("leftAuto");
+        final AutoTrajectory startToMid = routine.trajectory("leftTrenchToMid");
+        final AutoTrajectory midToShoot = routine.trajectory("leftMidToAlliance");
+        routine.active().onTrue(
+            startToMid.resetOdometry()
+            .andThen(startToMid.cmd()).deadlineFor(new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake)))
+            .andThen(midToShoot.cmd()).deadlineFor(new ChangeTurretMode(drivetrain, "Hub"),new AutoSetInterpolatedShooterRPM(drivetrain, shooter))
+            .andThen(new RunFullIndexing(indexer))
+        );
+        return routine;
+    }
+    public AutoRoutine rightAuto(){
+        AutoRoutine routine = factory.newRoutine("leftAuto");
+        final AutoTrajectory startToMid = routine.trajectory("leftTrenchToMid");
+        final AutoTrajectory midToShoot = routine.trajectory("leftMidToAlliance");
+        routine.active().onTrue(
+            startToMid.resetOdometry()
+            .andThen(startToMid.cmd()).deadlineFor(new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake)))
+            .andThen(midToShoot.cmd()).deadlineFor(new ChangeTurretMode(drivetrain, "Hub"),new AutoSetInterpolatedShooterRPM(drivetrain, shooter))
+            .andThen(new RunFullIndexing(indexer))
+        );
         return routine;
     }
 }
