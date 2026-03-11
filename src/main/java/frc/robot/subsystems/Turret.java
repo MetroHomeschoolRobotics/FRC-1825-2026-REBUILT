@@ -119,8 +119,10 @@ public class Turret extends SubsystemBase {
     public void incrementTurretAngle(double input){
         pid.setSetpoint(pid.getSetpoint()+ input);
     }
+    /**this treats 0 as facing the intake, the shooter starts facing -90 (90 degrees CCW) */
     public void fixSetpoint(){
         double setpoint = pid.getSetpoint();
+        
         if(setpoint>90){
                 setpoint-=360;
             }else if(setpoint<-270){

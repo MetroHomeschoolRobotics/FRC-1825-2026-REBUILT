@@ -23,7 +23,7 @@ public class Indexer extends SubsystemBase{
     }
     private void setConfigs(){
         config.CurrentLimits.StatorCurrentLimit = 40;
-        config.MotorOutput.Inverted =InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public void setBeltSpeed(double speed){
         belt.set(speed);

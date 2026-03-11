@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase{
     }
     private void setConfigs(){
         config.CurrentLimits.StatorCurrentLimit = 40;
-        config.MotorOutput.Inverted =InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public double getInterpolatedRPM(double distToHub){
         double targetRPM = interpolation.get(distToHub);

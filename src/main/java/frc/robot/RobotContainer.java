@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.IncrementShooterRPM;
@@ -130,6 +131,11 @@ public class RobotContainer {
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, "Neutral"));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
+        
+        //interpolation setter that never ends
+        manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
+
+        manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));
         manipulatorXbox.povUp().whileTrue(new RetractIntake(intake));
     CommandScheduler.getInstance().setDefaultCommand(shooter, incrementShooterRPM );
