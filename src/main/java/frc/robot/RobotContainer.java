@@ -82,9 +82,10 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
+            //TODO check w/ Austin on this idea
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverXbox.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverXbox.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-driverXbox.getLeftY() * MaxSpeed*(manipulatorXbox.y().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverXbox.getLeftX() * MaxSpeed*(manipulatorXbox.y().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );

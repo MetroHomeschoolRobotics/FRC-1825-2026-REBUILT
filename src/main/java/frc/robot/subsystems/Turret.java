@@ -99,20 +99,21 @@ public class Turret extends SubsystemBase {
             return output+robotAngle;
 
         }
+       
         public void setPID(double angle){
             pid.setSetpoint(angle);
         }
         public static double getAbsoluteAngle(){
-            double output =angle.getAbsolutePosition().getValueAsDouble();
+            double output =rotationCount*36;
            
-            if(output>180){
-                output-=360;
-                // rotationCount+=0.5;
-            }else if(output<-180){
+            // if(output>180){
+            //     output-=360;
+            //     // rotationCount+=0.5;
+            // }else if(output<-180){
                 
-                output+=360;
-                // rotationCount-=0.5;
-            }
+            //     output+=360;
+            //     // rotationCount-=0.5;
+            // }
             return output;
     }
     public void incrementTurretAngle(double input){
@@ -120,9 +121,9 @@ public class Turret extends SubsystemBase {
     }
     public void fixSetpoint(){
         double setpoint = pid.getSetpoint();
-        if(setpoint>180){
+        if(setpoint>90){
                 setpoint-=360;
-            }else if(setpoint<-180){
+            }else if(setpoint<-270){
                 setpoint+=360;
             }
         pid.setSetpoint(setpoint);

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Hood extends SubsystemBase {
-    //TO/DO fix the magic numbers here
+    
     
     
     private CANdi CANDi= new CANdi(Constants.MotorIDs.CANDiId); 
@@ -46,6 +46,9 @@ public class Hood extends SubsystemBase {
     public double getAngle(){
         return Constants.MathConstants.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
         ;
+    }
+    public double getPwmPosition(){
+        return CANDi.getPWM1Position().getValueAsDouble();
     }
     
 
