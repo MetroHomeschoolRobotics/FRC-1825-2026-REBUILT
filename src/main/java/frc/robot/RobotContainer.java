@@ -135,7 +135,9 @@ public class RobotContainer {
         
         //interpolation setter that never ends
         manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
-
+        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,2500).andThen(new RunFullIndexing(indexer)));
+        manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer));
+        
         manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));
         manipulatorXbox.povUp().whileTrue(new RetractIntake(intake));
