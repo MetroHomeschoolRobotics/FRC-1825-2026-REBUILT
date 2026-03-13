@@ -27,6 +27,7 @@ public final class Constants {
 
         public static final int CANDiId = 25;
     }
+   
     public static class MathConstants{
         public static final double hoodRotationsPerDegree=1.0;
         public static final double defaultHoodAngle = 58.337;

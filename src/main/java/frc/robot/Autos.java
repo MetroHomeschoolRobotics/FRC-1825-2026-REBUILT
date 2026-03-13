@@ -69,9 +69,9 @@ public class Autos {
         return routine;
     }
     public AutoRoutine rightAuto(){
-        AutoRoutine routine = factory.newRoutine("leftAuto");
-        final AutoTrajectory startToMid = routine.trajectory("leftTrenchToMid");
-        final AutoTrajectory midToShoot = routine.trajectory("leftMidToAlliance");
+        AutoRoutine routine = factory.newRoutine("rightAuto");
+        final AutoTrajectory startToMid = routine.trajectory("rightTrenchToMid");
+        final AutoTrajectory midToShoot = routine.trajectory("rightMidToAlliance");
         routine.active().onTrue(
             startToMid.resetOdometry()
             .andThen(startToMid.cmd()).deadlineFor(new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake)))

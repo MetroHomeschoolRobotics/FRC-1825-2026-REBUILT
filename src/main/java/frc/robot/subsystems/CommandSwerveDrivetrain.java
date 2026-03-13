@@ -56,6 +56,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.vision.TagTracking;
 
@@ -242,7 +243,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
-        configureAutoBuilder();
+        
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -338,10 +339,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     public double angleToHub(){
         
-        double output = Units.radiansToDegrees(Math.atan(
-            (hubPose.getY()-getRobotPose().getY())
-            /
-            (hubPose.getX()-getRobotPose().getX())));
+        // double output = Units.radiansToDegrees(Math.atan(
+        //     (hubPose.getY()-getRobotPose().getY())
+        //     /
+        //     (hubPose.getX()-getRobotPose().getX())));
+        double dx = (hubPose.getX()-getRobotPose().getX());
+        double dy = (hubPose.getY()-getRobotPose().getY());
+        double output = Units.radiansToDegrees(Math.atan2(dy, dx));
         if(hubPose.getX()-getRobotPose().getX()<0){
             output+=180;
             if(output >180){
@@ -385,6 +389,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             trajLogger
         );
     }
+    
     public double distanceToPose(Pose2d pose) {
 
         // difference in x and y
@@ -446,6 +451,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
             Turret.turretSetSetpoint(180);
         }
+
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);
         // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
