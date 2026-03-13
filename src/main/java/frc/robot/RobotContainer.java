@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
@@ -125,19 +126,28 @@ public class RobotContainer {
         
         driverXbox.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer)));
-        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain,"Hub").andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter)));
+        // Actually start shooter, into the hub
+        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer))); 
+        // Starts the turret and hood tracking the hub       
+        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain,"Hub").andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
+        // Starts the turret and hood tracking the alliance wall
         manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, "Passing").andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, "Neutral"));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
         
         //interpolation setter that never ends
+        //Spins up the shooter to shooter into the hub, but doesn't run the indexer
         manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
+        //Runs the indexer
+        manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer));
+        //Runs the shooter at a preset RPM, and runs the indexer
+        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,2500).andThen(new RunFullIndexing(indexer))); 
 
         manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));
         manipulatorXbox.povUp().whileTrue(new RetractIntake(intake));
+
     CommandScheduler.getInstance().setDefaultCommand(shooter, incrementShooterRPM );
     CommandScheduler.getInstance().setDefaultCommand(turret, incrementTurretAngle);
     }
@@ -169,6 +179,11 @@ public class RobotContainer {
     }
     public void test(){
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
+    }
+    public void startUp(){
+        hood.setPID(Constants.Setpoints.defaultHoodAngle);
+        turret.setPID(90);//default angle 
+        shooter.setRPM(0);
     }
     public void periodic() {
        

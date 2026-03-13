@@ -55,7 +55,7 @@ public class Intake extends SubsystemBase {
         intakeRetractor.set(0);
     }
     public double getIntakeAngle(){
-        return angle.getAbsolutePosition().getValueAsDouble()+defaultCANcoderAngle;
+        return (angle.getAbsolutePosition().getValueAsDouble()*360)+defaultCANcoderAngle;
     }
     public void simulationPeriodic(){
         

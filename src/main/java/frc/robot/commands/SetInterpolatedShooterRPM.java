@@ -21,7 +21,7 @@ public class SetInterpolatedShooterRPM extends Command {
     public void initialize(){
       }
     public void execute(){
-           if(DriverStation.getAlliance().get()==Alliance.Blue){
+           if(DriverStation.getAlliance().orElse(Alliance.Red)==Alliance.Blue){
             shooter.setRPM(shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose)));
         }else{
         shooter.setRPM(shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
