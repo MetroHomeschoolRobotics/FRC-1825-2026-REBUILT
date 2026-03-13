@@ -18,7 +18,7 @@ public class RunFullIndexing extends Command {
         indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
         indexer.setIndexerSpeed(Constants.Setpoints.indexerSpeed);
     }
-    public void end(){
+    public void end(boolean interrupted){
         indexer.stopBelt();
         indexer.stopIndexer();
     }

@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.CANBus;
+//import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -14,7 +14,7 @@ import frc.robot.utils.HubActiveState;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
-    CANBus replayBus = new CANBus("*", "logs/2026-01-15_13-18-58/sim_2026-01-15_13-18-58.hoot");
+    //CANBus replayBus = new CANBus("*", "logs/2026-01-15_13-18-58/sim_2026-01-15_13-18-58.hoot");
     
 
     private final RobotContainer m_robotContainer;
@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+        m_robotContainer.startUp();
     }
 
     @Override

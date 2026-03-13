@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
@@ -169,6 +170,11 @@ public class RobotContainer {
     }
     public void test(){
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
+    }
+    public void startUp(){
+        hood.setPID(Constants.Setpoints.defaultHoodAngle);
+        turret.setPID(90);//default angle 
+        shooter.setRPM(0);
     }
     public void periodic() {
        

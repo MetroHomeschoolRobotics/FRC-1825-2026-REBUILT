@@ -20,5 +20,5 @@ public class IncrementTurretAngle extends Command {
     public boolean isFinished(){
         return false;
     }
-    public void end(){}
+    public void end(boolean interrupted){}
 }
