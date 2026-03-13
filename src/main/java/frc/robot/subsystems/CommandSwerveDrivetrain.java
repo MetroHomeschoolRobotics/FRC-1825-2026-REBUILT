@@ -242,7 +242,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
-        configureAutoBuilder();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -338,10 +337,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     public double angleToHub(){
         
-        double output = Units.radiansToDegrees(Math.atan(
-            (hubPose.getY()-getRobotPose().getY())
-            /
-            (hubPose.getX()-getRobotPose().getX())));
+        // double output = Units.radiansToDegrees(Math.atan(
+        //     (hubPose.getY()-getRobotPose().getY())
+        //     /
+        //     (hubPose.getX()-getRobotPose().getX())));
+        double dx = (hubPose.getX()-getRobotPose().getX());
+        double dy = (hubPose.getY()-getRobotPose().getY());
+        double output = Units.radiansToDegrees(Math.atan2(dy, dx));
         if(hubPose.getX()-getRobotPose().getX()<0){
             output+=180;
             if(output >180){
