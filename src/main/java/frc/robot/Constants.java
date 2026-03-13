@@ -30,9 +30,8 @@ public final class Constants {
    
     public static class MathConstants{
         public static final double hoodRotationsPerDegree=1.0;
-        public static final double defaultHoodAngle = 58.337;
 
-        public static final double shooterWheelRadius = Units.inchesToMeters(4/2);//diameter/2
+        public static final double shooterWheelRadius = Units.inchesToMeters(4.0/2.0); //diameter/2
         public static final double shooterWheelCircumference = 2*Math.PI*shooterWheelRadius;
     }
     public static class FieldSetpoints{
@@ -67,7 +66,7 @@ public final class Constants {
  
     }
     public static class Setpoints{
-        public static final double defaultHoodAngle = 58.377;
+        public static final double defaultHoodAngle = 58.337;
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
         public static final double retractorRetractSpeed = 0.4;
