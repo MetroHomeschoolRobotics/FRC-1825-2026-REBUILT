@@ -126,9 +126,12 @@ public class RobotContainer {
         
         driverXbox.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer)));
-        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain,"Hub").andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter)));
+        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer))); 
+        // Actually start shooter, into the hub
+        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain,"Hub").andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
+        // Starts the turret and hood tracking the hub
         manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, "Passing").andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
+        // Starts the turret and hood tracking the alliance wall
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, "Neutral"));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
