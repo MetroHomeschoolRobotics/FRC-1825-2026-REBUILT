@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -36,8 +37,8 @@ public final class Constants {
     }
     public static class FieldSetpoints{
       
-        public static final Pose2d blueHubPose = new Pose2d(Units.inchesToMeters(181.56),Units.inchesToMeters(158), null);
-        public static final Pose2d redHubPose = new Pose2d(Units.inchesToMeters(469.62),Units.inchesToMeters(158), null);
+        public static final Pose2d blueHubPose = new Pose2d(Units.inchesToMeters(181.56),Units.inchesToMeters(158), Rotation2d.kZero);
+        public static final Pose2d redHubPose = new Pose2d(Units.inchesToMeters(469.62),Units.inchesToMeters(158), Rotation2d.kZero);
         
          public static final double blueAllianceZoneX= Units.inchesToMeters(144.19);
         public static final double redAllianceZoneX = Units.inchesToMeters(464.63);
@@ -93,17 +94,17 @@ public final class Constants {
         //TO/DO populate this
     }
     public static class PIDConstants{
-        public static final double hoodP =0.01;
+        public static final double hoodP =0.01; // % output / degree
         public static final double hoodI =0;
         public static final double hoodD =0;
 
-        public static final double shooterP = 0.0019;
-        public static final double shooterI = 0.0012;
-        public static final double shooterD= 0.0014;
+        public static final double shooterP = 0.0019; // % output / RPM error
+        public static final double shooterI = 0.0012; // % output / (RPM * second)
+        public static final double shooterD= 0.0014; // % output  / (RPM / second) ALSO (% output * second) / RPM 
         
-        public static final double turretP = 0.0009;
-        public static final double turretI = 0.000;
-        public static final double turretD = 0;
+        public static final double turretP = 0.0009; // % output / degree
+        public static final double turretI = 0.000; // % output / (degree * second)
+        public static final double turretD = 0; // % output / (degree / second)
     }
     public static class CameraPositions {
     public static final Transform3d frontLeftTranslation = new Transform3d(
@@ -125,4 +126,5 @@ public final class Constants {
 //             Units.degreesToRadians(0)));
                                                               
    }
+   public enum TurretMode { HUB, PASSING, NEUTRAL };
  }

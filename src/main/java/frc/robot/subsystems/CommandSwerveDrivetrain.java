@@ -215,6 +215,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }catch(Error resultingError){
         hubPose = Constants.FieldSetpoints.redHubPose;
+        DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
     }
     configureAutoBuilder();
         if (Utils.isSimulation()) {
@@ -492,22 +493,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }
             
            
-        } catch(Error resultingError) {}
+        } catch(Error resultingError) {
+            DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
+        }
         
     }
 
     private void startSimThread() {
          m_lastSimTime = Utils.getCurrentTimeSeconds();
-         m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        if (m_simOdometry == null) {
-            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
-            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-            for(int i = 0; i < modules.length; ++i) {
-                positions[i] = modules[i].getCachedPosition();
-            }
-            m_simOdometry = new SwerveDriveOdometry(getKinematics(), Rotation2d.kZero, positions);
-        }
 
         if (m_simOdometry == null) {
             SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
@@ -529,13 +522,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             
             SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
             SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-            for(int i = 0; i < modules.length; ++i) {
-                positions[i] = modules[i].getCachedPosition();
-            }
-            m_simOdometry.update(Rotation2d.fromDegrees(getPigeon2().getYaw().getValue().in(Degrees)), positions);
-            
-            
-            
             for(int i = 0; i < modules.length; ++i) {
                 positions[i] = modules[i].getCachedPosition();
             }

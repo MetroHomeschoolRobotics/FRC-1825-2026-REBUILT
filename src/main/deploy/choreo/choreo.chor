@@ -3,7 +3,29 @@
  "version":2,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "maxAcc":{
+    "dimension":"Number",
+    "var":{
+     "exp":"3",
+     "val":3.0
+    }
+   },
+   "maxAngVel":{
+    "dimension":"Number",
+    "var":{
+     "exp":"360",
+     "val":360.0
+    }
+   },
+   "maxVelocity":{
+    "dimension":"Number",
+    "var":{
+     "exp":"4",
+     "val":4.0
+    }
+   }
+  },
   "poses":{}
  },
  "config":{
