@@ -19,7 +19,8 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetInterpolatedShooterRPM;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
-
+import frc.robot.Constants;
+import frc.robot.Constants.TurretMode;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
@@ -53,7 +54,7 @@ public class Autos {
         routine.active().onTrue(startToShoot.resetOdometry()
         .andThen(startToShoot.cmd())
         .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
-        .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, "Hub"),new SetInterpolatedShooterRPM(drivetrain, shooter)))
+        .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
         .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
             // startToShoot.resetOdometry()
@@ -77,7 +78,7 @@ public class Autos {
                   startToMid.resetOdometry().
             andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
-            .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, "Hub"),new SetInterpolatedShooterRPM(drivetrain, shooter)))
+            .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
             .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
@@ -101,7 +102,7 @@ public class Autos {
             startToMid.resetOdometry().
             andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
-            .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, "Hub"),new SetInterpolatedShooterRPM(drivetrain, shooter)))
+            .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
             .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5))).andThen(new SetShooterRPM(shooter,0))
         );

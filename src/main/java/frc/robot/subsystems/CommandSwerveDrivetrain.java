@@ -56,7 +56,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.vision.TagTracking;
 
@@ -216,6 +215,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }catch(Error resultingError){
         hubPose = Constants.FieldSetpoints.redHubPose;
+        DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
     }
     configureAutoBuilder();
         if (Utils.isSimulation()) {
@@ -243,7 +243,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
-        
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -389,7 +388,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             trajLogger
         );
     }
-    
     public double distanceToPose(Pose2d pose) {
 
         // difference in x and y
@@ -451,7 +449,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
             Turret.turretSetSetpoint(180);
         }
-
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);
         // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
@@ -496,22 +493,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }
             
            
-        } catch(Error resultingError) {}
+        } catch(Error resultingError) {
+            DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
+        }
         
     }
 
     private void startSimThread() {
          m_lastSimTime = Utils.getCurrentTimeSeconds();
-         m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        if (m_simOdometry == null) {
-            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
-            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-            for(int i = 0; i < modules.length; ++i) {
-                positions[i] = modules[i].getCachedPosition();
-            }
-            m_simOdometry = new SwerveDriveOdometry(getKinematics(), Rotation2d.kZero, positions);
-        }
 
         if (m_simOdometry == null) {
             SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
@@ -533,13 +522,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             
             SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
             SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-            for(int i = 0; i < modules.length; ++i) {
-                positions[i] = modules[i].getCachedPosition();
-            }
-            m_simOdometry.update(Rotation2d.fromDegrees(getPigeon2().getYaw().getValue().in(Degrees)), positions);
-            
-            
-            
             for(int i = 0; i < modules.length; ++i) {
                 positions[i] = modules[i].getCachedPosition();
             }

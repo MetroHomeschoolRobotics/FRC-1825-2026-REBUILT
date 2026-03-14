@@ -44,7 +44,7 @@ public class Hood extends SubsystemBase {
         
     }
     public double getAngle(){
-        return Constants.MathConstants.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
+        return Constants.Setpoints.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
         ;
     }
     public double getPwmPosition(){
