@@ -94,17 +94,17 @@ public final class Constants {
         //TO/DO populate this
     }
     public static class PIDConstants{
-        public static final double hoodP =0.01;
+        public static final double hoodP =0.01; // % output / degree
         public static final double hoodI =0;
         public static final double hoodD =0;
 
-        public static final double shooterP = 0.0019;
-        public static final double shooterI = 0.0012;
-        public static final double shooterD= 0.0014;
+        public static final double shooterP = 0.0019; // % output / RPM error
+        public static final double shooterI = 0.0012; // % output / (RPM * second)
+        public static final double shooterD= 0.0014; // % output  / (RPM / second) ALSO (% output * second) / RPM 
         
-        public static final double turretP = 0.0009;
-        public static final double turretI = 0.000;
-        public static final double turretD = 0;
+        public static final double turretP = 0.0009; // % output / degree
+        public static final double turretI = 0.000; // % output / (degree * second)
+        public static final double turretD = 0; // % output / (degree / second)
     }
     public static class CameraPositions {
     public static final Transform3d frontLeftTranslation = new Transform3d(
