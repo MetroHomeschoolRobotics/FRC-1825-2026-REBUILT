@@ -12,6 +12,7 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.RunFullIndexing;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
+import frc.robot.Constants;
 
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
@@ -45,7 +46,7 @@ public class Autos {
 
         routine.active().onTrue(
             startToShoot.resetOdometry()
-            .andThen(new ChangeTurretMode(drivetrain, "Hub"))
+            .andThen(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB))
             .andThen(startToShoot.cmd()).deadlineFor(new AutoSetInterpolatedShooterRPM(drivetrain,shooter))
             .andThen(Commands.waitSeconds(0.3)).deadlineFor(new RunFullIndexing(indexer))
             .andThen(Commands.waitSeconds(.5)).deadlineFor(new DeployIntake(intake))
@@ -63,7 +64,7 @@ public class Autos {
         routine.active().onTrue(
             startToMid.resetOdometry()
             .andThen(startToMid.cmd()).deadlineFor(new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake)))
-            .andThen(midToShoot.cmd()).deadlineFor(new ChangeTurretMode(drivetrain, "Hub"),new AutoSetInterpolatedShooterRPM(drivetrain, shooter))
+            .andThen(midToShoot.cmd()).deadlineFor(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB),new AutoSetInterpolatedShooterRPM(drivetrain, shooter))
             .andThen(new RunFullIndexing(indexer))
         );
         return routine;
@@ -75,7 +76,7 @@ public class Autos {
         routine.active().onTrue(
             startToMid.resetOdometry()
             .andThen(startToMid.cmd()).deadlineFor(new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake)))
-            .andThen(midToShoot.cmd()).deadlineFor(new ChangeTurretMode(drivetrain, "Hub"),new AutoSetInterpolatedShooterRPM(drivetrain, shooter))
+            .andThen(midToShoot.cmd()).deadlineFor(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB),new AutoSetInterpolatedShooterRPM(drivetrain, shooter))
             .andThen(new RunFullIndexing(indexer))
         );
         return routine;
