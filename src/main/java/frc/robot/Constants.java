@@ -95,16 +95,16 @@ public final class Constants {
     }
     public static class PIDConstants{
         public static final double hoodP =0.01; // % output / degree
-        public static final double hoodI =0;
-        public static final double hoodD =0;
+        public static final double hoodI =0; // % output / (degree * second)
+        public static final double hoodD =0; // % output / (degree / second)
 
-        public static final double shooterP = 0.0019; // % output / RPM error
+        public static final double shooterP = 0.0001; // % output / RPM error
         public static final double shooterI = 0.00;//12; // % output / (RPM * second)
         public static final double shooterD= 0.000;//14; // % output  / (RPM / second) ALSO (% output * second) / RPM 
 
-        public static final double shooterKs = 0;
-        public static final double shooterKv = 0.00016; // 1/6000, % Output / RPM
-        public static final double shooterKa = 0;
+        public static final double shooterKs = 0; // % Output (constant)
+        public static final double shooterKv = 0.000166; // 1/6000, % Output / RPM
+        public static final double shooterKa = 0; // % output / (RPM*second)
         
         public static final double turretP = 0.0009; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)
