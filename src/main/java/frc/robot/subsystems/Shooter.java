@@ -11,6 +11,7 @@ import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -30,6 +31,7 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase{
     private PIDController pid = new PIDController(Constants.PIDConstants.shooterP,Constants.PIDConstants.shooterI,Constants.PIDConstants.shooterD);
+    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.PIDConstants.shooterKs, Constants.PIDConstants.shooterKv, Constants.PIDConstants.shooterKa);
     
     private double desiredVelocity = 0;
     private InterpolatingDoubleTreeMap interpolation = new InterpolatingDoubleTreeMap();
@@ -104,7 +106,8 @@ public class Shooter extends SubsystemBase{
     public void periodic(){
         //double output = pid.calculate(getRPM());
         //setSpeed(output);
-        double output = pid.getSetpoint()/6000;
+        // double output = pid.getSetpoint()/6000;
+        double output = feedforward.calculate(desiredVelocity)+pid.calculate(getRPM(), desiredVelocity);
         setSpeed(output);
         SmartDashboard.putNumber("ShooterRPM", getRPM());
         SmartDashboard.putNumber("Fuel Velocity", estimatedFuelVelocity());
