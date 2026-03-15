@@ -71,8 +71,8 @@ public final class Constants {
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
         public static final double retractorRetractSpeed = 0.4;
-        public static final double indexerSpeed = 0.3;
-        public static final double beltSpeed = 0.3;
+        public static final double indexerSpeed = 0.7;
+        public static final double beltSpeed = 0.7;
         public static final double intakeSpeed = 0.5;
     }   
     public static class InterpolationData{
@@ -99,8 +99,8 @@ public final class Constants {
         public static final double hoodD =0;
 
         public static final double shooterP = 0.0019; // % output / RPM error
-        public static final double shooterI = 0.0012; // % output / (RPM * second)
-        public static final double shooterD= 0.0014; // % output  / (RPM / second) ALSO (% output * second) / RPM 
+        public static final double shooterI = 0.00;//12; // % output / (RPM * second)
+        public static final double shooterD= 0.000;//14; // % output  / (RPM / second) ALSO (% output * second) / RPM 
         
         public static final double turretP = 0.0009; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)

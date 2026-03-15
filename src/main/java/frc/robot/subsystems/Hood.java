@@ -1,15 +1,10 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANdi;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANdiSimState;
-import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.simulation.PWMSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

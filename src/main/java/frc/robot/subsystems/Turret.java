@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -30,7 +29,6 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.driveToPose;
 
 public class Turret extends SubsystemBase {
     
@@ -62,7 +60,9 @@ public class Turret extends SubsystemBase {
     private double lastSimTime = 0.0;
         public Turret(){
             startSimThread();
-            setConfigs();
+            if(Utils.isSimulation()){
+            startSimThread();
+        }
             turret.getConfigurator().apply(config);
         }
         private void setConfigs(){
@@ -80,7 +80,8 @@ public class Turret extends SubsystemBase {
             
         }
         public static void setRobotAngle(double angle){
-            robotAngle = angle+90;
+            
+            robotAngle = angle-45;
         }
         /**use the cancoder position with the 10:1 gear ratio to get the actual angle,
          * it also adds the robot angle
@@ -95,7 +96,7 @@ public class Turret extends SubsystemBase {
             // }else if(output<-18){
             //     output+=36;
             // }
-            output =rotationCount*36;
+            output =rotationCount*9;
             return output+robotAngle;
 
         }
@@ -139,14 +140,18 @@ public class Turret extends SubsystemBase {
        
        fixSetpoint();
         double output = pid.calculate(getGearedAngle());
-        turret.set(output);
+       // turret.set(output);
 
-
+        SmartDashboard.putNumber("turret motor encoder ", turret.getPosition().getValueAsDouble());
+        //0.37 to -9.63 90ish degrees to the right
+        //-14.9 rightmost limit
+        //
 
         SmartDashboard.putNumber("absolute angle", getAbsoluteAngle());
         SmartDashboard.putNumber("rotation count", rotationCountInt);
         SmartDashboard.putNumber("geared angle", getGearedAngle());
         SmartDashboard.putNumber("setpoint turret", pid.getSetpoint());
+        SmartDashboard.putBoolean("turret beambreak", !beambreak.get());
 
     }
     public void simulationPeriodic(){

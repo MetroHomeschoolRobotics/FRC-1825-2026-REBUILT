@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +17,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -27,13 +28,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import choreo.Choreo.TrajectoryLogger;
 import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -46,12 +40,10 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import frc.robot.subsystems.vision.TagTracking;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -391,13 +383,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public double distanceToPose(Pose2d pose) {
 
         // difference in x and y
-        double XDir = pose.getX() - getRobotPose().getX();
-        double yDir = pose.getY() - getRobotPose().getY();
+        // double XDir = pose.getX() - getRobotPose().getX();
+        // double yDir = pose.getY() - getRobotPose().getY();
 
         //System.out.println("X robot: " + getRobotPose().getX() + ", X stalk: " + pose.getX());
         // This uses the distance formula to get the distance
-        double distance = Math.sqrt(Math.pow(XDir, 2) + Math.pow(yDir, 2)); 
-        distance = pose.getTranslation().getDistance(getRobotPose().getTranslation());
+        //double distance = Math.sqrt(Math.pow(XDir, 2) + Math.pow(yDir, 2)); 
+        double distance = pose.getTranslation().getDistance(getRobotPose().getTranslation());
 
         return distance;
     }
@@ -485,7 +477,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
                         // if the apriltag is too far, throw its results away
                         //if(camera.getApriltagDistance(getRobotPose(), target.getBestTarget().getFiducialId()) > 3) {// TO/DO test distance tracking
-                            addVisionMeasurement(cameraPose.toPose2d(), Timer.getFPGATimestamp());
+                            addVisionMeasurement(cameraPose.toPose2d(), cameraPoseEstimator.get().timestampSeconds);
 
                         //}
                     }

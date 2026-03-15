@@ -86,8 +86,8 @@ public class RobotContainer {
             // Drivetrain will execute this command periodically
             //TODO check w/ Austin on this idea
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverXbox.getLeftY() * MaxSpeed*(manipulatorXbox.y().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverXbox.getLeftX() * MaxSpeed*(manipulatorXbox.y().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
+                drive.withVelocityX(-driverXbox.getLeftY() * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverXbox.getLeftX() * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -142,7 +142,7 @@ public class RobotContainer {
         //Runs the indexer
         manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer));
         //Runs the shooter at a preset RPM, and runs the indexer
-        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,2500).andThen(new RunFullIndexing(indexer))); 
+        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,1500).andThen(new RunFullIndexing(indexer))); 
 
         manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));
@@ -182,7 +182,7 @@ public class RobotContainer {
     }
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
-        turret.setPID(90);//default angle 
+        turret.setPID(-90);//default angle 
         shooter.setRPM(0);
     }
     public void periodic() {

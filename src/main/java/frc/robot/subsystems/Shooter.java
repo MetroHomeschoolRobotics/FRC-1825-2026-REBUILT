@@ -1,23 +1,4 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.AngularVelocity;
-import frc.robot.Constants;
-
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -27,8 +8,24 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
-import com.ctre.phoenix6.sim.TalonFXSSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 
 public class Shooter extends SubsystemBase{
@@ -36,8 +33,8 @@ public class Shooter extends SubsystemBase{
     
     private double desiredVelocity = 0;
     private InterpolatingDoubleTreeMap interpolation = new InterpolatingDoubleTreeMap();
-    private TalonFX shooter1 = new TalonFX(Constants.MotorIDs.shooterMotorID1);
-    private TalonFX shooter2 = new TalonFX(Constants.MotorIDs.shooterMotorID2);
+    private TalonFX shooter1 = new TalonFX(Constants.MotorIDs.shooterMotorID1,"rio");
+    private TalonFX shooter2 = new TalonFX(Constants.MotorIDs.shooterMotorID2,"rio");
     
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -64,7 +61,10 @@ public class Shooter extends SubsystemBase{
         for (int i = 0 ; i<inputs.length;i++) {
             interpolation.put(inputs[i], outputs[i]);
         } 
-        startSimThread();
+        if(Utils.isSimulation()){
+            startSimThread();
+        }
+        
     }
     private void setConfigs(){
         config.CurrentLimits.StatorCurrentLimit = 40;
@@ -102,7 +102,9 @@ public class Shooter extends SubsystemBase{
     }
    
     public void periodic(){
-        double output = pid.calculate(getRPM());
+        //double output = pid.calculate(getRPM());
+        //setSpeed(output);
+        double output = pid.getSetpoint()/6000;
         setSpeed(output);
         SmartDashboard.putNumber("ShooterRPM", getRPM());
         SmartDashboard.putNumber("Fuel Velocity", estimatedFuelVelocity());
