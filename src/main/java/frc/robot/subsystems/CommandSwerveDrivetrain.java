@@ -205,7 +205,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }else{
             hubPose = Constants.FieldSetpoints.redHubPose;
         }
-    }catch(Error resultingError){
+    }catch(Exception resultingError){
         hubPose = Constants.FieldSetpoints.redHubPose;
         DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
     }
@@ -485,7 +485,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }
             
            
-        } catch(Error resultingError) {
+        } catch(Exception resultingError) {
             DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
         }
         
