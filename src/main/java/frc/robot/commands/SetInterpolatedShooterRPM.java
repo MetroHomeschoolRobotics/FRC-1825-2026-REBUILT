@@ -15,7 +15,7 @@ public class SetInterpolatedShooterRPM extends Command {
         drivetrain = _drivetrain;
         shooter = _shooter;
 
-        addRequirements(_drivetrain);
+       
         addRequirements(_shooter);
     }
     public void initialize(){

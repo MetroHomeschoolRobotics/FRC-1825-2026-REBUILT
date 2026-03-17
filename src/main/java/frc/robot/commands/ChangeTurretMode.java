@@ -16,7 +16,7 @@ public class ChangeTurretMode extends Command {
     public ChangeTurretMode(CommandSwerveDrivetrain _drivetrain, TurretMode _mode){
         drivetrain =_drivetrain;
         mode=_mode;
-        addRequirements(drivetrain);
+        //addRequirements(drivetrain);
     }
     public void initialize(){
         switch (mode) {

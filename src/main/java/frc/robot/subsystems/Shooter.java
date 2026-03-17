@@ -111,6 +111,7 @@ public class Shooter extends SubsystemBase{
         setSpeed(output);
         SmartDashboard.putNumber("ShooterRPM", getRPM());
         SmartDashboard.putNumber("Fuel Velocity", estimatedFuelVelocity());
+        SmartDashboard.putNumber("shooter setpoint", desiredVelocity );
         
         
     }

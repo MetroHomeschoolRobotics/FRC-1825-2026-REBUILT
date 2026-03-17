@@ -12,10 +12,9 @@ public class DeployIntake extends Command{
     }
     public void initialize(){}
     public void execute(){
-        if(intake.getIntakeAngle()>35){
+        
         intake.setRetractorSpeed(Constants.Setpoints.retractorDeploySpeed);
-        }else{intake.setRetractorSpeed(.1);}
     }
-    public boolean isFinished(){return intake.getIntakeAngle()<5;}
+    public boolean isFinished(){return false;}
     public void end(boolean interrupted){intake.stopIntakeRetractor();}
 }

@@ -48,7 +48,7 @@ public class Autos {
 
         routine.active().onTrue(startToShoot.resetOdometry()
         .andThen(startToShoot.cmd())
-        .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
+        .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
         .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
         .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
@@ -71,7 +71,7 @@ public class Autos {
         final var idle = new SwerveRequest.Idle();
         routine.active().onTrue(
                   startToMid.resetOdometry().
-            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
+            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
@@ -89,7 +89,7 @@ public class Autos {
         routine.active().onTrue(
             
             startToMid.resetOdometry().
-            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
+            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             

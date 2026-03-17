@@ -100,7 +100,9 @@ public class Turret extends SubsystemBase {
             return output+robotAngle;
 
         }
-       
+       public void set(double num){
+        turret .set(num);
+       }
         public void setPID(double angle){
             pid.setSetpoint(angle);
         }
@@ -120,27 +122,27 @@ public class Turret extends SubsystemBase {
     public void incrementTurretAngle(double input){
         pid.setSetpoint(pid.getSetpoint()+ input);
     }
-    /**this treats 0 as facing the intake, the shooter starts facing -90 (90 degrees CCW) */
+    /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         double setpoint = pid.getSetpoint();
         
-        if(setpoint>90){
-                setpoint-=360;
-            }else if(setpoint<-270){
-                setpoint+=360;
+        if(setpoint>125){
+                setpoint-=355;
+            }else if(setpoint<-230){
+                setpoint+=355;
             }
         pid.setSetpoint(setpoint);
     }
     public void periodic(){
         //DOES THIS WORK, IDK
         if(!beambreak.get()){
-            angle.setPosition(-5);
+            turret.setPosition(19);
         }
-       rotationCount=angle.getPosition().getValueAsDouble();
+       rotationCount=turret.getPosition().getValueAsDouble();
        
        fixSetpoint();
         double output = pid.calculate(getGearedAngle());
-       // turret.set(output);
+      // turret.set(output);
 
         SmartDashboard.putNumber("turret motor encoder ", turret.getPosition().getValueAsDouble());
         //0.37 to -9.63 90ish degrees to the right

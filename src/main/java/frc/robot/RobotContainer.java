@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.logging.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
 import choreo.auto.AutoChooser;
@@ -16,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -36,6 +39,7 @@ import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetInterpolatedShooterRPM;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.SetTurretAngle;
+import frc.robot.commands.directdriveturrret;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
@@ -47,7 +51,7 @@ import frc.robot.subsystems.Turret;
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
+    
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -67,6 +71,7 @@ public class RobotContainer {
     public final Hood hood = new Hood();
 
     public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
+    //public final directdriveturrret incrementTurretAngle = new directdriveturrret(turret, manipulatorXbox);//IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
 
     private final AutoChooser autoChooser = new AutoChooser();
@@ -77,6 +82,9 @@ public class RobotContainer {
         autos = new Autos(autoFactory, turret, hood, intake, indexer, shooter, drivetrain);
          createAutoChooser();
         configureBindings();
+       
+        DataLogManager.start();
+        
     }
 
     private void configureBindings() {
@@ -182,7 +190,7 @@ public class RobotContainer {
     }
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
-        turret.setPID(-90);//default angle 
+        turret.setPID(0);//default angle 
         shooter.setRPM(0);
     }
     public void periodic() {
