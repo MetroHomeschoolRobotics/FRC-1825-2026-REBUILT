@@ -5,22 +5,17 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
-import choreo.trajectory.Trajectory;
-
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.TurretMode;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.RunFullIndexing;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetInterpolatedShooterRPM;
 import frc.robot.commands.SetShooterRPM;
-import frc.robot.commands.AutoSetInterpolatedShooterRPM;
-import frc.robot.Constants;
-import frc.robot.Constants.TurretMode;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
@@ -53,7 +48,7 @@ public class Autos {
 
         routine.active().onTrue(startToShoot.resetOdometry()
         .andThen(startToShoot.cmd())
-        .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
+        .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
         .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
         .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
@@ -76,7 +71,7 @@ public class Autos {
         final var idle = new SwerveRequest.Idle();
         routine.active().onTrue(
                   startToMid.resetOdometry().
-            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
+            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
@@ -92,20 +87,16 @@ public class Autos {
         final AutoTrajectory midToShoot = routine.trajectory("rightMidToAlliance");
         final var idle = new SwerveRequest.Idle();
         routine.active().onTrue(
-            // startToMid.resetOdometry()
-            // .andThen(startToMid.cmd()).deadlineFor(new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake)))
-            // .andThen(midToShoot.cmd())
-            // .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, "Hub"),new SetInterpolatedShooterRPM(drivetrain, shooter)))
-            // .andThen(drivetrain.applyRequest(() -> idle))
-            // .andThen(new RunFullIndexing(indexer)).raceWith(Commands.waitSeconds(5))
-            // .andThen(new SetShooterRPM(shooter,0))
+            
             startToMid.resetOdometry().
-            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new DeployIntake(intake),new RunIntake(intake))))
+            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
             .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5))).andThen(new SetShooterRPM(shooter,0))
-        );
+            .andThen(drivetrain.applyRequest(()->idle))
+        
+            );
         return routine;
     }
 }

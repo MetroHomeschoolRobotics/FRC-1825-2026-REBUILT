@@ -71,38 +71,44 @@ public final class Constants {
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
         public static final double retractorRetractSpeed = 0.4;
-        public static final double indexerSpeed = 0.3;
-        public static final double beltSpeed = 0.3;
-        public static final double intakeSpeed = 0.5;
+        public static final double indexerSpeed = 0.7;
+        public static final double beltSpeed = 0.7;
+        public static final double intakeSpeed = 0.4;
     }   
     public static class InterpolationData{
         //Fake data made using a trajectory calculator
         public static final double[] inputs = {
-            Units.inchesToMeters(90.62),//0
-            Units.inchesToMeters(120.62),//1
-            Units.inchesToMeters(140),//2
-            Units.inchesToMeters(159.59),//3
-            Units.inchesToMeters(213.1)//4
+            2.25,//0
+            2.78,//1
+            3.26,//2
+            3.63,//3
+            3.77,
+           4.08//4
         };
         public static final double[] outputs = {
-            2475,//0
-            2635,//1
-            2750,//2
-            2910,//3
-            3265//4
+            4050,//0
+            4330,//1
+            4510,//2
+            4768,//3
+            4779,
+            4850//4
         };
         //TO/DO populate this
     }
     public static class PIDConstants{
         public static final double hoodP =0.01; // % output / degree
-        public static final double hoodI =0;
-        public static final double hoodD =0;
+        public static final double hoodI =0; // % output / (degree * second)
+        public static final double hoodD =0; // % output / (degree / second)
 
-        public static final double shooterP = 0.0019; // % output / RPM error
-        public static final double shooterI = 0.0012; // % output / (RPM * second)
-        public static final double shooterD= 0.0014; // % output  / (RPM / second) ALSO (% output * second) / RPM 
+        public static final double shooterP = 0.000; // % output / RPM error
+        public static final double shooterI = 0.00;//12; // % output / (RPM * second)
+        public static final double shooterD= 0.000;//14; // % output  / (RPM / second) ALSO (% output * second) / RPM 
+
+        public static final double shooterKs = 0; // % Output (constant)
+        public static final double shooterKv = 0.000166; // 1/6000, % Output / RPM
+        public static final double shooterKa = 0; // % output / (RPM*second)
         
-        public static final double turretP = 0.0009; // % output / degree
+        public static final double turretP = 0.0014; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)
         public static final double turretD = 0; // % output / (degree / second)
     }

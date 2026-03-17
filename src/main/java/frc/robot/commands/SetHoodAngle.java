@@ -11,11 +11,11 @@ public class SetHoodAngle extends Command{
         angle = _angle;
         addRequirements(_hood);
     }
-    public void initialize(){}
+    public void initialize(){hood.setPID(angle);}
     public void execute(){
-        hood.setPID(angle);
+        
     }
     public boolean isFinished(){
-        return false;
+        return true;
     }
 }
