@@ -18,6 +18,7 @@ public class SetInterpolatedShooterRPM extends Command {
        
         addRequirements(_shooter);
     }
+    
     public void initialize(){
       }
     public void execute(){

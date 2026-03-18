@@ -88,15 +88,28 @@ public class Autos {
         final var idle = new SwerveRequest.Idle();
         routine.active().onTrue(
             
-            startToMid.resetOdometry().
-            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
-            .andThen(midToShoot.cmd())
-            .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
+            // startToMid.resetOdometry().
+            // andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
+            // .andThen(midToShoot.cmd())
+            // .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5))).andThen(new SetShooterRPM(shooter,0))
-            .andThen(drivetrain.applyRequest(()->idle))
-        
+            // .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5))).andThen(new SetShooterRPM(shooter,0))
+            // .andThen(drivetrain.applyRequest(()->idle))
+            startToMid.resetOdometry().andThen(startToMid.cmd()).andThen(midToShoot.cmd()).andThen(drivetrain.applyRequest(()->idle))
             );
+        return routine;
+    }
+    public AutoRoutine centerShoot8(){
+        AutoRoutine routine = factory.newRoutine("centerShoot8");
+
+        final AutoTrajectory startToShoot = routine.trajectory("midToShooting");
+        final var idle = new SwerveRequest.Idle();
+        routine.active().onTrue(
+            startToShoot.resetOdometry().andThen(startToShoot.cmd()).andThen(new ParallelRaceGroup(Commands.waitSeconds(0.5),drivetrain.applyRequest(()->idle)))
+           .andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3)) .andThen(new ParallelRaceGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(2)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
+            .andThen(new SetShooterRPM(shooter, 0))
+        ));
         return routine;
     }
 }

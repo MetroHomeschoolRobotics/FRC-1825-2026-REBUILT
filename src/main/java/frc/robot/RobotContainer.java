@@ -183,6 +183,7 @@ public class RobotContainer {
         autoChooser.addRoutine("left", autos::leftAuto);
         autoChooser.addRoutine("right", autos::rightAuto);
         autoChooser.addRoutine("center", autos::midAuto);
+        autoChooser.addRoutine("centerShoot8", autos::centerShoot8);
         SmartDashboard.putData("auto chooser",autoChooser);
     }
     public void test(){
@@ -190,7 +191,7 @@ public class RobotContainer {
     }
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
-        turret.setPID(0);//default angle 
+        turret.setPID(124.9);//default angle 
         shooter.setRPM(0);
     }
     public void periodic() {

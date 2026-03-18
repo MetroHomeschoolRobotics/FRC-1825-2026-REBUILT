@@ -13,6 +13,7 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -70,10 +71,10 @@ public class Turret extends SubsystemBase {
         config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
         public static void turretSetSetpoint(double setpoint){
-            if(setpoint>180){
-                setpoint-=360;
-            }else if(setpoint<-180){
-                setpoint+=360;
+            if(setpoint>125){
+                setpoint-=355;
+            }else if(setpoint<-230){
+                setpoint+=355;
             }
             pid.setSetpoint(setpoint);
             
@@ -107,7 +108,7 @@ public class Turret extends SubsystemBase {
             pid.setSetpoint(angle);
         }
         public static double getAbsoluteAngle(){
-            double output =rotationCount*36;
+            double output =rotationCount*9;
            
             // if(output>180){
             //     output-=360;
@@ -125,11 +126,23 @@ public class Turret extends SubsystemBase {
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         double setpoint = pid.getSetpoint();
-        
-        if(setpoint>125){
+        String sameCorrectionFlag ="";
+        if(setpoint>=125){
                 setpoint-=355;
-            }else if(setpoint<-230){
+                sameCorrectionFlag="125";
+            }else if(setpoint<-230.5){
                 setpoint+=355;
+                sameCorrectionFlag="-230";
+            }
+        if(getAbsoluteAngle()>=171){
+            if(sameCorrectionFlag!="125"){
+                setpoint-=355;
+            }
+                
+            }else if(getAbsoluteAngle()<-184){
+                if(sameCorrectionFlag!="-230"){
+                setpoint+=355;
+            }
             }
         pid.setSetpoint(setpoint);
     }
@@ -142,7 +155,9 @@ public class Turret extends SubsystemBase {
        
        fixSetpoint();
         double output = pid.calculate(getGearedAngle());
-      // turret.set(output);
+        output = MathUtil.clamp(output, -.2, .2);
+         //turret.set(output);
+      
 
         SmartDashboard.putNumber("turret motor encoder ", turret.getPosition().getValueAsDouble());
         //0.37 to -9.63 90ish degrees to the right
