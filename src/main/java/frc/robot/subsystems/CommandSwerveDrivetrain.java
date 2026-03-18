@@ -33,6 +33,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
@@ -298,6 +300,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Pose2d getRobotPose(){
         return this.getState().Pose;
     }
+
+public Pose2d getRobotPoseSOTM() {
+    final double flightTime = 1.65; // seconds
+
+    // getState().Speeds is robot-relative — convert to field-relative
+    // using the robot's current heading
+    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+        this.getState().Speeds,
+        this.getState().Pose.getRotation()
+    );
+
+    // Multiply velocity (m/s) by time (s) to get a position offset (m)
+    Translation2d velocityOffset = new Translation2d(
+        fieldRelativeSpeeds.vxMetersPerSecond * flightTime,
+        fieldRelativeSpeeds.vyMetersPerSecond * flightTime
+    );
+
+    // Add the offset to the current pose's translation
+    // Rotation stays the same — we're offsetting position, not heading
+    return new Pose2d(
+        this.getState().Pose.getTranslation().plus(velocityOffset),
+        this.getState().Pose.getRotation()
+    );
+}
 
     public Field2d getField2d(){
         return field;
