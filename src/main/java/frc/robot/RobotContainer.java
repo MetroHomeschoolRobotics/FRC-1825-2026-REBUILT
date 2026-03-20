@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -32,6 +34,7 @@ import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
+import frc.robot.commands.PointToHub;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunFullIndexing;
 import frc.robot.commands.RunIntake;
@@ -57,7 +60,7 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.FieldCentricFacingAngle point = new SwerveRequest.FieldCentricFacingAngle();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -76,6 +79,7 @@ public class RobotContainer {
 
     private final AutoChooser autoChooser = new AutoChooser();
     private final AutoFactory autoFactory;
+    private double angleToHubContainer = 0;
     private  Autos autos;
        public RobotContainer() {
         autoFactory = drivetrain.createAutoFactory();
@@ -99,7 +103,10 @@ public class RobotContainer {
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-
+        driverXbox.rightBumper().whileTrue((angleToHub())
+        .andThen(drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
+        .withVelocityY(-driverXbox.getLeftY()).withHeadingPID(11.13,0,0.169)
+        .withTargetDirection(new Rotation2d(angleToHubContainer+90)))));
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -141,6 +148,7 @@ public class RobotContainer {
         // Starts the turret and hood tracking the alliance wall
         manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.PASSING).andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.NEUTRAL));
+        manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter)));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
         
@@ -179,6 +187,12 @@ public class RobotContainer {
         // );
         return autoChooser.selectedCommand();
     }
+    private void updateContainer(){
+    angleToHubContainer = drivetrain.angleToHub();
+    }
+    private Command angleToHub(){
+        return  new InstantCommand(()->updateContainer(), hood);
+    }
     private void createAutoChooser(){
         autoChooser.addRoutine("left", autos::leftAuto);
         autoChooser.addRoutine("right", autos::rightAuto);
@@ -187,6 +201,7 @@ public class RobotContainer {
         SmartDashboard.putData("auto chooser",autoChooser);
     }
     public void test(){
+        SmartDashboard.putNumber("angleToHubContainer", angleToHubContainer);
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     public void startUp(){

@@ -134,12 +134,12 @@ public class Turret extends SubsystemBase {
                 setpoint+=355;
                 sameCorrectionFlag="-230";
             }
-        if(getAbsoluteAngle()>=171){
+        if(getAbsoluteAngle()>=171&&setpoint>-230){
             if(sameCorrectionFlag!="125"){
                 setpoint-=355;
             }
                 
-            }else if(getAbsoluteAngle()<-184){
+            }else if(getAbsoluteAngle()<-180&&setpoint<124){
                 if(sameCorrectionFlag!="-230"){
                 setpoint+=355;
             }
@@ -155,8 +155,8 @@ public class Turret extends SubsystemBase {
        
        fixSetpoint();
         double output = pid.calculate(getGearedAngle());
-        output = MathUtil.clamp(output, -.2, .2);
-         //turret.set(output);
+        output = MathUtil.clamp(output, -.3, .3);
+        // turret.set(output);
       
 
         SmartDashboard.putNumber("turret motor encoder ", turret.getPosition().getValueAsDouble());

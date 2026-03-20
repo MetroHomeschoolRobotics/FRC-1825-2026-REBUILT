@@ -85,13 +85,14 @@ public final class Constants {
             3.77,
            4.08//4
         };
+        private static double rpmdrop = 750;
         public static final double[] outputs = {
-            4050,//0
-            4330,//1
-            4510,//2
-            4768,//3
-            4779,
-            4850//4
+            4050-rpmdrop,//0
+            4330-rpmdrop,//1
+            4510-rpmdrop,//2
+            4768-rpmdrop,//3
+            4779-rpmdrop,
+            4850-rpmdrop//4
         };
         //TO/DO populate this
     }
@@ -108,7 +109,7 @@ public final class Constants {
         public static final double shooterKv = 0.000166; // 1/6000, % Output / RPM
         public static final double shooterKa = 0; // % output / (RPM*second)
         
-        public static final double turretP = 0.0014; // % output / degree
+        public static final double turretP = 0.0027; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)
         public static final double turretD = 0; // % output / (degree / second)
     }
@@ -132,5 +133,5 @@ public final class Constants {
 //             Units.degreesToRadians(0)));
                                                               
    }
-   public enum TurretMode { HUB, PASSING, NEUTRAL };
+   public enum TurretMode { HUB, PASSING, NEUTRAL, HUBSOTM };
  }

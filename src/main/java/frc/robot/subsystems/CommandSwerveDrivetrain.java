@@ -87,6 +87,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private boolean hubTrackingEnabled = false;
     private boolean passingModeEnabled = false;
+    private boolean hubTrackingSOTMEnabled = false;
     private Pose2d hubPose;
 
      private static final Field2d field = new Field2d();
@@ -331,14 +332,22 @@ public Pose2d getRobotPoseSOTM() {
     public void neutralTurretMode(){
         hubTrackingEnabled= false;
         passingModeEnabled = false;
+        hubTrackingSOTMEnabled = false;
+    }
+    public void SOTMTurretMode(){
+        hubTrackingEnabled= false;
+        passingModeEnabled = false;
+        hubTrackingSOTMEnabled = true;
     }
     public void hubTurretMode(){
         hubTrackingEnabled = true;
         passingModeEnabled = false;
+        hubTrackingSOTMEnabled = false;
     }
     public void passingTurretMode(){
         hubTrackingEnabled = false;
         passingModeEnabled = true;
+        hubTrackingSOTMEnabled = false;
     }
     public void toggleHubTracking(){
         if(hubTrackingEnabled==true){
@@ -364,6 +373,18 @@ public Pose2d getRobotPoseSOTM() {
         double dy = (hubPose.getY()-getRobotPose().getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
         if(hubPose.getX()-getRobotPose().getX()<0){
+            output+=180;
+            if(output >180){
+                output -=360;
+            }
+        }
+        return output;
+    }
+    public double angleToHubSOTM(){
+        double dx = (hubPose.getX()-getRobotPoseSOTM().getX());
+        double dy = (hubPose.getY()-getRobotPoseSOTM().getY());
+        double output = Units.radiansToDegrees(Math.atan2(dy, dx));
+        if(hubPose.getX()-getRobotPoseSOTM().getX()<0){
             output+=180;
             if(output >180){
                 output -=360;
@@ -419,7 +440,13 @@ public Pose2d getRobotPoseSOTM() {
 
         return distance;
     }
-   
+    public double distanceToPoseSOTM(Pose2d pose) {
+
+        // difference in x and y
+        double distance = pose.getTranslation().getDistance(getRobotPoseSOTM().getTranslation());
+
+        return distance;
+    }
     /**
      * Runs the SysId Dynamic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -466,6 +493,9 @@ public Pose2d getRobotPoseSOTM() {
                 Turret.turretSetSetpoint(0);
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
             Turret.turretSetSetpoint(180);
+        
+        }else if(hubTrackingSOTMEnabled){
+            Turret.turretSetSetpoint(angleToHubSOTM());
         }
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);

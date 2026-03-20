@@ -15,7 +15,7 @@ public class IncrementTurretAngle extends Command {
     }
     public void initialize(){}
     public void execute(){
-        turret.incrementTurretAngle(MathUtil.applyDeadband(xbox.getRightX(),0.10));
+        turret.incrementTurretAngle(MathUtil.applyDeadband(xbox.getRightX(),0.10)*5);
     }
     public boolean isFinished(){
         return false;

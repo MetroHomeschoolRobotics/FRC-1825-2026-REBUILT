@@ -8,7 +8,7 @@ public class RunIntake extends Command {
     private Intake intake;
     public 
     RunIntake(Intake _intake){
-        addRequirements(_intake);
+       // addRequirements(_intake);
         intake=_intake;
     }
     public void initialize(){}
