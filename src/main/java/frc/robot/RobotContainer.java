@@ -16,6 +16,7 @@ import choreo.auto.AutoRoutine;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -38,6 +39,7 @@ import frc.robot.commands.PointToHub;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunFullIndexing;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunIntakeBackwards;
 import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetInterpolatedShooterRPM;
 import frc.robot.commands.SetShooterRPM;
@@ -76,7 +78,7 @@ public class RobotContainer {
     public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
     //public final directdriveturrret incrementTurretAngle = new directdriveturrret(turret, manipulatorXbox);//IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
-
+    private final SlewRateLimiter slewRateLimiter = new SlewRateLimiter(3);
     private final AutoChooser autoChooser = new AutoChooser();
     private final AutoFactory autoFactory;
     private double angleToHubContainer = 0;
@@ -98,15 +100,15 @@ public class RobotContainer {
             // Drivetrain will execute this command periodically
             //TODO check w/ Austin on this idea
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverXbox.getLeftY() * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverXbox.getLeftX() * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
+                drive.withVelocityX((Math.pow(-driverXbox.getLeftY(),3)) * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
+                    .withVelocityY((Math.pow(-driverXbox.getLeftX(),3)) * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-        driverXbox.rightBumper().whileTrue((angleToHub())
-        .andThen(drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
+        driverXbox.x().whileTrue(new RunIntakeBackwards(intake));
+        driverXbox.rightBumper().whileTrue((drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
         .withVelocityY(-driverXbox.getLeftY()).withHeadingPID(11.13,0,0.169)
-        .withTargetDirection(new Rotation2d(angleToHubContainer+90)))));
+        .withTargetDirection( new Rotation2d(drivetrain.angleToHub()-90)))));
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -125,6 +127,7 @@ public class RobotContainer {
         driverXbox.back().and(driverXbox.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         driverXbox.start().and(driverXbox.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         driverXbox.start().and(driverXbox.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        
 
         // Reset the field-centric heading on left bumper press.
         // driverXbox.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -142,7 +145,7 @@ public class RobotContainer {
         driverXbox.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         // Actually start shooter, into the hub
-        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer))); 
+        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer,shooter))); 
         // Starts the turret and hood tracking the hub       
         manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
         // Starts the turret and hood tracking the alliance wall
@@ -156,9 +159,9 @@ public class RobotContainer {
         //Spins up the shooter to shooter into the hub, but doesn't run the indexer
         manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
         //Runs the indexer
-        manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer));
+        manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer,shooter));
         //Runs the shooter at a preset RPM, and runs the indexer
-        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,1500).andThen(new RunFullIndexing(indexer))); 
+        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,1500).andThen(new RunFullIndexing(indexer,shooter))); 
 
         manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));
@@ -198,6 +201,7 @@ public class RobotContainer {
         autoChooser.addRoutine("right", autos::rightAuto);
         autoChooser.addRoutine("center", autos::midAuto);
         autoChooser.addRoutine("centerShoot8", autos::centerShoot8);
+        autoChooser.addRoutine("stationaryShoot8", autos::stationaryShoot8);
         SmartDashboard.putData("auto chooser",autoChooser);
     }
     public void test(){

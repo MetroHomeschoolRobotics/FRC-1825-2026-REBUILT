@@ -50,7 +50,7 @@ public class Autos {
         .andThen(startToShoot.cmd())
         .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
         .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
-        .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
+        .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
             // startToShoot.resetOdometry()
             // .andThen(new ChangeTurretMode(drivetrain, "Hub"))
@@ -75,7 +75,7 @@ public class Autos {
             .andThen(midToShoot.cmd())
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
 
         );
@@ -106,10 +106,24 @@ public class Autos {
         final var idle = new SwerveRequest.Idle();
         routine.active().onTrue(
             startToShoot.resetOdometry().andThen(startToShoot.cmd()).andThen(new ParallelRaceGroup(Commands.waitSeconds(0.5),drivetrain.applyRequest(()->idle)))
-           .andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3)) .andThen(new ParallelRaceGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(2)))
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
+           //.andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3))
+            .andThen(new ParallelRaceGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(2)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))
-        ));
+        );
+        return routine;
+    }
+
+  public AutoRoutine stationaryShoot8(){
+        AutoRoutine routine = factory.newRoutine("centerShoot8");
+
+        final AutoTrajectory startToShoot = routine.trajectory("midToShooting");
+        final var idle = new SwerveRequest.Idle();
+        routine.active().onTrue(
+           (new ParallelRaceGroup(new SetShooterRPM(shooter, 4200),Commands.waitSeconds(2)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+            .andThen(new SetShooterRPM(shooter, 0))
+        );
         return routine;
     }
 }
