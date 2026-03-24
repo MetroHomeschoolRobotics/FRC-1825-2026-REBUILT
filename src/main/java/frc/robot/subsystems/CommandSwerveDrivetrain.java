@@ -299,6 +299,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
     public Pose2d getRobotPose(){
+        
         return this.getState().Pose;
     }
 
@@ -372,12 +373,7 @@ public Pose2d getRobotPoseSOTM() {
         double dx = (hubPose.getX()-getRobotPose().getX());
         double dy = (hubPose.getY()-getRobotPose().getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
-        if(hubPose.getX()-getRobotPose().getX()<0){
-            output+=180;
-            if(output >180){
-                output -=360;
-            }
-        }
+       
         return output;
     }
     public double angleToHubSOTM(){
@@ -484,10 +480,15 @@ public Pose2d getRobotPoseSOTM() {
         
         field.setRobotPose(getRobotPose());
         SmartDashboard.putData("Field",getField2d());
-        
+        double rot= getRobotPose().getRotation().getDegrees();
+        if(rot>180){
+            rot-=360;
+        }else if(rot<=-180){
+            rot+=360;
+        }
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
         if(hubTrackingEnabled){
-            Turret.turretSetSetpoint(angleToHub());
+            Turret.turretSetSetpoint(angleToHub()-rot);
         }else if(passingModeEnabled){
             if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
                 Turret.turretSetSetpoint(0);

@@ -35,48 +35,56 @@ public class Turret extends SubsystemBase {
     
     private static CANcoder angle = new CANcoder(Constants.MotorIDs.turretCANcoderID,"*");
         private TalonFX turret = new TalonFX(Constants.MotorIDs.turretMotorID,"*");
+        
         private DigitalInput beambreak = new DigitalInput(0);
         private static double robotAngle;
         private static double rotationCount = 0;
         private static int rotationCountInt = 0;
         private TalonFXConfiguration config = new TalonFXConfiguration();
+       
+
+
+        private boolean hasCorrectedNegative = false;
+        private boolean hasCorrectedPositive = false;
+        private static double setpoint=0;
+                private static PIDController pid = new PIDController(Constants.PIDConstants.turretP,Constants.PIDConstants.turretI, Constants.PIDConstants.turretD);
         
-        private static PIDController pid = new PIDController(Constants.PIDConstants.turretP,Constants.PIDConstants.turretI, Constants.PIDConstants.turretD);
-
-         private final Mechanism2d leaderMotorMech2d = new Mechanism2d(2, 2);
-    private final MechanismLigament2d leaderMotorFlywheelMech2d = leaderMotorMech2d.getRoot("Flywheel Root leaderMotor", 1, 1)
-        .append(new MechanismLigament2d("Flywheel leaderMotor", 1, 0));
-
-     private final StatusSignal<AngularVelocity> leaderMotorVelocity = turret.getVelocity(false);
-    private static final double kGearRatio = 1;
-        private final DCMotor leaderMotorDCMotors = DCMotor.getKrakenX60Foc(2);
-    private final LinearSystem<N2, N1, N2> leaderMotorTurretSystem = LinearSystemId.createDCMotorSystem(leaderMotorDCMotors, 0.004, kGearRatio);
-    private final DCMotorSim leaderMotorTurretSim = new DCMotorSim(leaderMotorTurretSystem, leaderMotorDCMotors);
-
-    private final CANcoderSimState angleSim = new CANcoderSimState(angle);
-
-
-    private static final double kSimLoopPeriod = 0.002; // 2 ms
-    private Notifier simNotifier = null;
-    private double lastSimTime = 0.0;
-        public Turret(){
-            startSimThread();
-            if(Utils.isSimulation()){
-            startSimThread();
-        }
-            turret.getConfigurator().apply(config);
-        }
-        private void setConfigs(){
-        config.CurrentLimits.StatorCurrentLimit = 40;
-        config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
-    }
-        public static void turretSetSetpoint(double setpoint){
-            if(setpoint>125){
-                setpoint-=355;
-            }else if(setpoint<-230){
-                setpoint+=355;
+                 private final Mechanism2d leaderMotorMech2d = new Mechanism2d(2, 2);
+            private final MechanismLigament2d leaderMotorFlywheelMech2d = leaderMotorMech2d.getRoot("Flywheel Root leaderMotor", 1, 1)
+                .append(new MechanismLigament2d("Flywheel leaderMotor", 1, 0));
+        
+             private final StatusSignal<AngularVelocity> leaderMotorVelocity = turret.getVelocity(false);
+            private static final double kGearRatio = 1;
+                private final DCMotor leaderMotorDCMotors = DCMotor.getKrakenX60Foc(2);
+            private final LinearSystem<N2, N1, N2> leaderMotorTurretSystem = LinearSystemId.createDCMotorSystem(leaderMotorDCMotors, 0.004, kGearRatio);
+            private final DCMotorSim leaderMotorTurretSim = new DCMotorSim(leaderMotorTurretSystem, leaderMotorDCMotors);
+        
+            private final CANcoderSimState angleSim = new CANcoderSimState(angle);
+        
+        
+            private static final double kSimLoopPeriod = 0.002; // 2 ms
+            private Notifier simNotifier = null;
+            private double lastSimTime = 0.0;
+                public Turret(){
+                    startSimThread();
+                    if(Utils.isSimulation()){
+                    startSimThread();
+                }
+                    setConfigs();
+                    turret.getConfigurator().apply(config);
+                }
+                private void setConfigs(){
+                config.CurrentLimits.StatorCurrentLimit = 40;
+                config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
+                config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
+                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=19;
+                config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
+                config.SoftwareLimitSwitch.ReverseSoftLimitThreshold=-20.2;
+        
             }
-            pid.setSetpoint(setpoint);
+                public static void turretSetSetpoint(double _setpoint){
+                    setpoint = _setpoint;
+            
             
             
         }
@@ -103,6 +111,7 @@ public class Turret extends SubsystemBase {
         }
        public void set(double num){
         turret .set(num);
+        
        }
         public void setPID(double angle){
             pid.setSetpoint(angle);
@@ -121,29 +130,35 @@ public class Turret extends SubsystemBase {
             return output;
     }
     public void incrementTurretAngle(double input){
-        pid.setSetpoint(pid.getSetpoint()+ input);
+        setpoint+=input;
     }
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
-        double setpoint = pid.getSetpoint();
+        
         String sameCorrectionFlag ="";
-        if(setpoint>=125){
+        if(setpoint>=171){
                 setpoint-=355;
                 sameCorrectionFlag="125";
-            }else if(setpoint<-230.5){
+                hasCorrectedPositive = true;
+            }else if(setpoint<-184){
                 setpoint+=355;
                 sameCorrectionFlag="-230";
+                hasCorrectedNegative=true;
             }
-        if(getAbsoluteAngle()>=171&&setpoint>-230){
-            if(sameCorrectionFlag!="125"){
-                setpoint-=355;
-            }
+        // if(getAbsoluteAngle()>=171){
+            
+        //         setpoint-=355.5;
+        //         hasCorrectedPositive = true;
                 
-            }else if(getAbsoluteAngle()<-180&&setpoint<124){
-                if(sameCorrectionFlag!="-230"){
-                setpoint+=355;
-            }
-            }
+        //     }else if(getAbsoluteAngle()<-184.5){
+               
+        //         setpoint+=355.5;
+        //         hasCorrectedNegative=true;
+        //     }
+        //     if(getAbsoluteAngle()<20&&getAbsoluteAngle()>-20){
+        //         hasCorrectedNegative=false;
+        //         hasCorrectedPositive=false;
+        //     }
         pid.setSetpoint(setpoint);
     }
     public void periodic(){
@@ -154,16 +169,24 @@ public class Turret extends SubsystemBase {
        rotationCount=turret.getPosition().getValueAsDouble();
        
        fixSetpoint();
-        double output = pid.calculate(getGearedAngle());
-        output = MathUtil.clamp(output, -.3, .3);
-        // turret.set(output);
       
+        double output = pid.calculate(getAbsoluteAngle());
 
+        output = MathUtil.clamp(output, -.3, .3);
+         if(turret.getPosition().getValueAsDouble()>=19&&output>0){
+            output=0;
+        }else if(turret.getPosition().getValueAsDouble()<-20&&output<0){
+            output=0;
+        }
+        turret.set(output);
+      
+        SmartDashboard.putBoolean("has corrected negative", hasCorrectedNegative);
+        SmartDashboard.putBoolean("has corrected positive", hasCorrectedPositive);
         SmartDashboard.putNumber("turret motor encoder ", turret.getPosition().getValueAsDouble());
         //0.37 to -9.63 90ish degrees to the right
         //-14.9 rightmost limit
         //
-
+        SmartDashboard.putNumber("setpoint minus angle", pid.getSetpoint()-robotAngle);
         SmartDashboard.putNumber("absolute angle", getAbsoluteAngle());
         SmartDashboard.putNumber("rotation count", rotationCountInt);
         SmartDashboard.putNumber("geared angle", getGearedAngle());
@@ -174,8 +197,15 @@ public class Turret extends SubsystemBase {
     public void simulationPeriodic(){
         angleSim.setVelocity(leaderMotorTurretSim.getAngularVelocityRPM()/60);
         angleSim.addPosition((leaderMotorTurretSim.getAngularVelocityRPM()/60)/50);
-        double output = pid.calculate(getGearedAngle());
-        turret.set(output);
+        fixSetpoint();
+        double output = pid.calculate(getAbsoluteAngle());
+        if(turret.getPosition().getValueAsDouble()>=19&&output>0){
+            output=0;
+        }else if(turret.getPosition().getValueAsDouble()<-20&&output<0){
+            output=0;
+        }
+        output = MathUtil.clamp(output, -.15, .15);
+        //turret.set(output);
         leaderMotorTurretSim.setInput(output*12);
         leaderMotorTurretSim.update(.02);
         

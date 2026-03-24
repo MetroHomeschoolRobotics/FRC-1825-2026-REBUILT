@@ -44,13 +44,13 @@ public class Intake extends SubsystemBase {
         //config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public void stopIntake(){
-       // intake.set(0);
+       intake.set(0);
     }
     public void setRetractorSpeed(double speed){
-        //intakeRetractor.set(speed);
+        intakeRetractor.set(speed);
     }
     public void stopIntakeRetractor(){
-       // intakeRetractor.set(0);
+       intakeRetractor.set(0);
     }
     public double getIntakeAngle(){
         return 0;//(angle.getAbsolutePosition().getValueAsDouble()*360)+defaultCANcoderAngle;

@@ -15,7 +15,7 @@ public class IncrementShooterRPM extends Command{
     }
     public void initialize(){}
     public void execute(){
-        shooter.incrementRPM(MathUtil.applyDeadband(-xbox.getLeftY(),0.10));
+        shooter.incrementRPM(MathUtil.applyDeadband(xbox.getLeftY(),0.10));
     }
     public void end(boolean interrupted){}
     public boolean isFinished(){return false;}
