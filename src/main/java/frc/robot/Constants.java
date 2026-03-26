@@ -75,15 +75,23 @@ public final class Constants {
         public static final double beltSpeed = 0.5;
         public static final double intakeSpeed = 0.4;
     }   
+    public static class TimeOfFlightLUT{
+        public static final double[] inputs = {
+            0//0 
+        };
+         public static final double[] outputs = {
+            1.65//0 
+        };
+    }
     public static class InterpolationData{
-        //Fake data made using a trajectory calculator
+      
         public static final double[] inputs = {
             2.25,//0
             2.78,//1
             3.26,//2
             3.63,//3
-            3.77,
-           4.08//4
+            3.77,//4
+           4.08//5
         };
         private static double rpmdrop = 750;
         public static final double[] outputs = {
@@ -91,10 +99,11 @@ public final class Constants {
             4330-rpmdrop,//1
             4510-rpmdrop,//2
             4768-rpmdrop,//3
-            4779-rpmdrop,
-            4850-rpmdrop//4
+            4779-rpmdrop,//4
+            4850-rpmdrop//5
+           
         };
-        //TO/DO populate this
+        
     }
     public static class PIDConstants{
         public static final double hoodP =0.01; // % output / degree
@@ -109,7 +118,7 @@ public final class Constants {
         public static final double shooterKv = 0.000166; // 1/6000, % Output / RPM
         public static final double shooterKa = 0; // % output / (RPM*second)
         
-        public static final double turretP = 0.0027; // % output / degree
+        public static final double turretP = 0.008; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)
         public static final double turretD = 0; // % output / (degree / second)
     }

@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase {
         intake.getConfigurator().apply(config);
     }
     public void setIntakeSpeed(double speed){
-        intake.set(speed);
+        //intake.set(speed);
         
     }
     private void setConfigs(){
@@ -47,10 +47,10 @@ public class Intake extends SubsystemBase {
        intake.set(0);
     }
     public void setRetractorSpeed(double speed){
-        intakeRetractor.set(speed);
+        //intakeRetractor.set(speed);
     }
     public void stopIntakeRetractor(){
-       intakeRetractor.set(0);
+       //intakeRetractor.set(0);
     }
     public double getIntakeAngle(){
         return 0;//(angle.getAbsolutePosition().getValueAsDouble()*360)+defaultCANcoderAngle;

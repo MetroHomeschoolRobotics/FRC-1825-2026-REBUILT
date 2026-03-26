@@ -34,6 +34,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -89,6 +90,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean passingModeEnabled = false;
     private boolean hubTrackingSOTMEnabled = false;
     private Pose2d hubPose;
+    private InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
      private static final Field2d field = new Field2d();
      private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
@@ -154,7 +156,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
     }
-  
+    
     /*
      * SysId routine for characterizing rotation.
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
@@ -213,6 +215,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
     }
     configureAutoBuilder();
+    fillTimeOfFlightLUT();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -238,6 +241,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
+        fillTimeOfFlightLUT();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -273,6 +277,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
         
         configureAutoBuilder();
+        fillTimeOfFlightLUT();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -298,13 +303,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
+    public void fillTimeOfFlightLUT(){
+        double[] inputs = Constants.TimeOfFlightLUT.inputs;
+        double[] outputs = Constants.TimeOfFlightLUT.outputs;
+        for(int i=0; i< inputs.length;i++){
+            timeOfFlight.put(inputs[i], outputs[i]);
+        }
+    }
     public Pose2d getRobotPose(){
         
         return this.getState().Pose;
     }
 
 public Pose2d getRobotPoseSOTM() {
-    final double flightTime = 1.65; // seconds
+    final double flightTime = timeOfFlight.get(distanceToPose(hubPose)); // seconds
 
     // getState().Speeds is robot-relative — convert to field-relative
     // using the robot's current heading
@@ -380,12 +392,7 @@ public Pose2d getRobotPoseSOTM() {
         double dx = (hubPose.getX()-getRobotPoseSOTM().getX());
         double dy = (hubPose.getY()-getRobotPoseSOTM().getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
-        if(hubPose.getX()-getRobotPoseSOTM().getX()<0){
-            output+=180;
-            if(output >180){
-                output -=360;
-            }
-        }
+       
         return output;
     }
     public void followPath(SwerveSample sample) {
@@ -466,7 +473,9 @@ public Pose2d getRobotPoseSOTM() {
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
         SmartDashboard.putNumber("dist to red hub", distanceToPose(hubPose));
-       
+        SmartDashboard.putNumber("angletoHubSOTM", angleToHubSOTM());
+        SmartDashboard.putNumber("angletohub", angleToHub());
+        SmartDashboard.putNumber("drivetrain rotation", getRobotPose().getRotation().getDegrees());
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -480,15 +489,15 @@ public Pose2d getRobotPoseSOTM() {
         
         field.setRobotPose(getRobotPose());
         SmartDashboard.putData("Field",getField2d());
-        double rot= getRobotPose().getRotation().getDegrees();
-        if(rot>180){
-            rot-=360;
-        }else if(rot<=-180){
-            rot+=360;
+        double rotation= getRobotPose().getRotation().getDegrees();
+        if(rotation>180){
+            rotation-=360;
+        }else if(rotation<=-180){
+            rotation+=360;
         }
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
         if(hubTrackingEnabled){
-            Turret.turretSetSetpoint(angleToHub()-rot);
+            Turret.turretSetSetpoint(angleToHub()-rotation);
         }else if(passingModeEnabled){
             if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
                 Turret.turretSetSetpoint(0);
@@ -496,7 +505,7 @@ public Pose2d getRobotPoseSOTM() {
             Turret.turretSetSetpoint(180);
         
         }else if(hubTrackingSOTMEnabled){
-            Turret.turretSetSetpoint(angleToHubSOTM());
+            Turret.turretSetSetpoint(angleToHubSOTM()-rotation);
         }
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);

@@ -30,7 +30,7 @@ public class ChangeTurretMode extends Command {
                 drivetrain.neutralTurretMode();
                 break; 
             case HUBSOTM:
-            
+                drivetrain.SOTMTurretMode();
             break;
             default:
 

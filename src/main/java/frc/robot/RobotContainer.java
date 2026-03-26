@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -42,6 +43,7 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeBackwards;
 import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetInterpolatedShooterRPM;
+import frc.robot.commands.SetInterpolatedShooterRPMSOTM;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.SetTurretAngle;
 import frc.robot.commands.directdriveturrret;
@@ -151,7 +153,10 @@ public class RobotContainer {
         // Starts the turret and hood tracking the alliance wall
         manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.PASSING).andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.NEUTRAL));
-        manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter)));
+       
+        manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUBSOTM)
+        .andThen(new SetInterpolatedShooterRPMSOTM(drivetrain,shooter))
+        .alongWith(new SequentialCommandGroup(Commands.waitSeconds(0.7),new RunFullIndexing(indexer, shooter))));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
         
@@ -193,9 +198,7 @@ public class RobotContainer {
     private void updateContainer(){
     angleToHubContainer = drivetrain.angleToHub();
     }
-    private Command angleToHub(){
-        return  new InstantCommand(()->updateContainer(), hood);
-    }
+  
     private void createAutoChooser(){
         autoChooser.addRoutine("left", autos::leftAuto);
         autoChooser.addRoutine("right", autos::rightAuto);
@@ -206,11 +209,12 @@ public class RobotContainer {
     }
     public void test(){
         SmartDashboard.putNumber("angleToHubContainer", angleToHubContainer);
+        
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
-        turret.setPID(124.9);//default angle 
+        turret.setPID(0);//default angle 
         shooter.setRPM(0);
     }
     public void periodic() {

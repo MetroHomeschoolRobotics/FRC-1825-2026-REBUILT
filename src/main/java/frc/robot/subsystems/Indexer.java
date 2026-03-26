@@ -26,13 +26,13 @@ public class Indexer extends SubsystemBase{
         config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public void setBeltSpeed(double speed){
-        belt.set(speed);
+        //belt.set(speed);
     }
     public void stopIndexer(){
-        indexer.set(0);
+        //indexer.set(0);
     }
     public void stopBelt(){
-        belt.set(0);
+        //belt.set(0);
     }
 
 }
