@@ -93,6 +93,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
      private static final Field2d field = new Field2d();
+     private static final Field2d fieldSOTM = new Field2d();
      private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
     //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
 
@@ -342,6 +343,9 @@ public Pose2d getRobotPoseSOTM() {
     public Field2d getField2d(){
         return field;
     }
+    public Field2d getField2dSOTM(){
+        return fieldSOTM;
+    }
     public void neutralTurretMode(){
         hubTrackingEnabled= false;
         passingModeEnabled = false;
@@ -488,7 +492,9 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
+        fieldSOTM.setRobotPose(getRobotPoseSOTM());
         SmartDashboard.putData("Field",getField2d());
+        SmartDashboard.putData("FieldSOTM",getField2dSOTM());
         double rotation= getRobotPose().getRotation().getDegrees();
         if(rotation>180){
             rotation-=360;
@@ -507,6 +513,7 @@ public Pose2d getRobotPoseSOTM() {
         }else if(hubTrackingSOTMEnabled){
             Turret.turretSetSetpoint(angleToHubSOTM()-rotation);
         }
+       
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);
         // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
