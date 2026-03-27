@@ -32,7 +32,7 @@ public class RunFullIndexing extends Command {
     public void end(boolean interrupted){
         indexer.stopBelt();
         indexer.stopIndexer();
-        shooter.setRPM(0);
+       // shooter.setRPM(0);
     }
     public boolean isFinished(){
         return false;
