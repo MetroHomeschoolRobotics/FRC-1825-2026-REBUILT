@@ -18,7 +18,7 @@ import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-public class PointToHub extends Command {
+public class PointToHubSOTM extends Command {
     CommandSwerveDrivetrain drivetrain;
     CommandXboxController joystick;
     Pose2d hubPose;
@@ -27,7 +27,7 @@ public class PointToHub extends Command {
     private final SwerveRequest.FieldCentricFacingAngle point = new SwerveRequest.FieldCentricFacingAngle()
     .withDeadband(MaxSpeed * 0.1);
     
-    public PointToHub(CommandSwerveDrivetrain _drivetrain, CommandXboxController _joystick){
+    public PointToHubSOTM(CommandSwerveDrivetrain _drivetrain, CommandXboxController _joystick){
         drivetrain = _drivetrain;
         addRequirements(drivetrain);
     }
@@ -36,7 +36,7 @@ public class PointToHub extends Command {
     }
     public void execute(){drivetrain.applyRequest(()->point.withVelocityX(-joystick.getLeftX()*MaxSpeed)
         .withVelocityY(-joystick.getLeftY())
-        .withTargetDirection(new Rotation2d(Units.degreesToRadians(drivetrain.angleToHub()+90)))
+        .withTargetDirection(new Rotation2d(Units.degreesToRadians(drivetrain.angleToHubSOTM()+90)))
         
         );
     }
