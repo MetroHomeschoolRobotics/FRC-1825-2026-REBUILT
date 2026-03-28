@@ -178,7 +178,7 @@ public class Turret extends SubsystemBase {
         }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
             output=0;
         }
-        turret.set(output);
+        //turret.set(output);
       
         SmartDashboard.putBoolean("has corrected negative", hasCorrectedNegative);
         SmartDashboard.putBoolean("has corrected positive", hasCorrectedPositive);
