@@ -77,9 +77,9 @@ public class Turret extends SubsystemBase {
                 config.CurrentLimits.StatorCurrentLimit = 40;
                 config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
                 config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
-                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=19;
+                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
                 config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
-                config.SoftwareLimitSwitch.ReverseSoftLimitThreshold=-20.2;
+                config.SoftwareLimitSwitch.ReverseSoftLimitThreshold=Constants.Setpoints.turretReverseSoftLimit;
         
             }
                 public static void turretSetSetpoint(double _setpoint){
@@ -137,11 +137,11 @@ public class Turret extends SubsystemBase {
         
         String sameCorrectionFlag ="";
         if(setpoint>=171){
-                setpoint-=355;
+                setpoint-=348;
                 sameCorrectionFlag="125";
                 hasCorrectedPositive = true;
-            }else if(setpoint<-184){
-                setpoint+=355;
+            }else if(setpoint<-177){
+                setpoint+=348;
                 sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
@@ -164,7 +164,7 @@ public class Turret extends SubsystemBase {
     public void periodic(){
         //DOES THIS WORK, IDK
         if(!beambreak.get()){
-            turret.setPosition(19);
+            turret.setPosition(Constants.Setpoints.turretForwardSoftLimit);
         }
        rotationCount=turret.getPosition().getValueAsDouble();
        
@@ -173,12 +173,12 @@ public class Turret extends SubsystemBase {
         double output = pid.calculate(getAbsoluteAngle());
 
         output = MathUtil.clamp(output, -.3, .3);
-         if(turret.getPosition().getValueAsDouble()>=19&&output>0){
+         if(turret.getPosition().getValueAsDouble()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
             output=0;
-        }else if(turret.getPosition().getValueAsDouble()<-20&&output<0){
+        }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
             output=0;
         }
-        //turret.set(output);
+        turret.set(output);
       
         SmartDashboard.putBoolean("has corrected negative", hasCorrectedNegative);
         SmartDashboard.putBoolean("has corrected positive", hasCorrectedPositive);
@@ -199,9 +199,9 @@ public class Turret extends SubsystemBase {
         angleSim.addPosition((leaderMotorTurretSim.getAngularVelocityRPM()/60)/50);
         fixSetpoint();
         double output = pid.calculate(getAbsoluteAngle());
-        if(turret.getPosition().getValueAsDouble()>=19&&output>0){
+        if(turret.getPosition().getValueAsDouble()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
             output=0;
-        }else if(turret.getPosition().getValueAsDouble()<-20&&output<0){
+        }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
             output=0;
         }
         output = MathUtil.clamp(output, -.15, .15);

@@ -93,7 +93,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
      private static final Field2d field = new Field2d();
-     private static final Field2d fieldSOTM = new Field2d();
+     //private static final Field2d fieldSOTM = new Field2d();
      private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
     //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
 
@@ -343,9 +343,9 @@ public Pose2d getRobotPoseSOTM() {
     public Field2d getField2d(){
         return field;
     }
-    public Field2d getField2dSOTM(){
-        return fieldSOTM;
-    }
+    // public Field2d getField2dSOTM(){
+    //     return fieldSOTM;
+    // }
     public void neutralTurretMode(){
         hubTrackingEnabled= false;
         passingModeEnabled = false;
@@ -492,16 +492,16 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
-        fieldSOTM.setRobotPose(getRobotPoseSOTM());
+        //fieldSOTM.setRobotPose(getRobotPoseSOTM());
         SmartDashboard.putData("Field",getField2d());
-        SmartDashboard.putData("FieldSOTM",getField2dSOTM());
-        double rotation= getRobotPose().getRotation().getDegrees();
+        //SmartDashboard.putData("FieldSOTM",getField2dSOTM());
+        double rotation= getRobotPose().getRotation().getDegrees()-180;
         if(rotation>180){
             rotation-=360;
         }else if(rotation<=-180){
             rotation+=360;
         }
-         Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
+         Turret.setRobotAngle(getRobotPose().getRotation().getDegrees()-180);
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub()-rotation);
         }else if(passingModeEnabled){

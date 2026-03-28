@@ -209,12 +209,12 @@ public class RobotContainer {
     }
     public void test(){
         SmartDashboard.putNumber("angleToHubContainer", angleToHubContainer);
-        
+        SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
-        turret.setPID(0);//default angle 
+        turret.setPID(169);//default angle 
         shooter.setRPM(0);
     }
     public void periodic() {
