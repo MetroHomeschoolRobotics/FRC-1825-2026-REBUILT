@@ -79,10 +79,16 @@ public final class Constants {
     }   
     public static class TimeOfFlightLUT{
         public static final double[] inputs = {
-            0//0 
+            1.7,//0
+            2.6,//1
+            3.6,//2
+            4.3//3 
         };
          public static final double[] outputs = {
-            1.65//0 
+            1.235,//0
+            1.347,//1 
+            1.624,//2
+            1.632//3
         };
     }
     public static class InterpolationData{
