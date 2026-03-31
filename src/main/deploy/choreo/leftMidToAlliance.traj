@@ -34,7 +34,8 @@
     {"from":"first", "to":"last", "data":{"type":"KeepOutCircle", "props":{"x":{"exp":"4.599639758467674 m", "val":4.599639758467674}, "y":{"exp":"4.0344297885894775 m", "val":4.0344297885894775}, "r":{"exp":"0.6 m", "val":0.6}}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"KeepOutCircle", "props":{"x":{"exp":"4.5801501870155334 m", "val":4.5801501870155334}, "y":{"exp":"2.51420995593071 m", "val":2.51420995593071}, "r":{"exp":"1 m", "val":1.0}}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"KeepOutCircle", "props":{"x":{"exp":"4.658110022544861 m", "val":4.658110022544861}, "y":{"exp":"5.515669882297516 m", "val":5.515669882297516}, "r":{"exp":"1 m", "val":1.0}}}, "enabled":true},
-    {"from":1, "to":2, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.11 m", "val":0.11}}}, "enabled":false}],
+    {"from":1, "to":2, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.11 m", "val":0.11}}}, "enabled":false},
+    {"from":2, "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"0 m / s", "val":0.0}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
    "val":0.05

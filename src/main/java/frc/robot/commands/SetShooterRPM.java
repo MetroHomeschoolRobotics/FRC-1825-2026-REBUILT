@@ -11,10 +11,10 @@ public class SetShooterRPM extends Command{
         shooter=_shooter;
         RPM=_RPM;
     }
-    public void initialize(){}
+    public void initialize(){shooter.setRPM(RPM);}
     public void execute(){
-        shooter.setRPM(RPM);
+        
     }
     public void end(boolean interrupted){}
-    public boolean isFinished(){return false;}
+    public boolean isFinished(){return true;}
 }
