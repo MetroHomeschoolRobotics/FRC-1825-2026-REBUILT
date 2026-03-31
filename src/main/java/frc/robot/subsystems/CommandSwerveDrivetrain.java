@@ -501,6 +501,9 @@ public Pose2d getRobotPoseSOTM() {
         }else if(rotation<=-180){
             rotation+=360;
         }
+        /** This logic should really live in the turret subsystem
+         * But I'm not taking the time to refactor all of that right now.
+         */
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees()-180);
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub()-rotation);

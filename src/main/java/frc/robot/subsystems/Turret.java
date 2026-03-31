@@ -66,7 +66,6 @@ public class Turret extends SubsystemBase {
             private Notifier simNotifier = null;
             private double lastSimTime = 0.0;
                 public Turret(){
-                    startSimThread();
                     if(Utils.isSimulation()){
                     startSimThread();
                 }
