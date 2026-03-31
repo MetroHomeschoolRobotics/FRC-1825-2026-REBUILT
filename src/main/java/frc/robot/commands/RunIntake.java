@@ -9,6 +9,7 @@ public class RunIntake extends Command {
     public 
     RunIntake(Intake _intake){
        // addRequirements(_intake);
+       // If this command requires the intake, it stops the deploy/retract motor from running at the same time.
         intake=_intake;
     }
     public void initialize(){}
