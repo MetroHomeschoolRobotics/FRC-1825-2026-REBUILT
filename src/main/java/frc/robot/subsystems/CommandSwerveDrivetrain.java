@@ -93,7 +93,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
      private static final Field2d field = new Field2d();
-     //private static final Field2d fieldSOTM = new Field2d();
+     private static final Field2d fieldSOTM = new Field2d();
      private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
     //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
 
@@ -315,7 +315,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         
         return this.getState().Pose;
     }
+public Pose2d SOTMtest(){
+final double flightTime = timeOfFlight.get(distanceToPoseSOTM(hubPose)); // seconds
 
+    // getState().Speeds is robot-relative — convert to field-relative
+    // using the robot's current heading
+    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+        this.getState().Speeds,
+        this.getState().Pose.getRotation()
+    );
+
+    // Multiply velocity (m/s) by time (s) to get a position offset (m)
+    Translation2d velocityOffset = new Translation2d(
+        fieldRelativeSpeeds.vxMetersPerSecond * flightTime,
+        fieldRelativeSpeeds.vyMetersPerSecond * flightTime
+    );
+
+    // Add the offset to the current pose's translation
+    // Rotation stays the same — we're offsetting position, not heading
+    return new Pose2d(
+        this.getState().Pose.getTranslation().plus(velocityOffset),
+        this.getState().Pose.getRotation()
+    );
+}
 public Pose2d getRobotPoseSOTM() {
     final double flightTime = timeOfFlight.get(distanceToPose(hubPose)); // seconds
 
@@ -343,9 +365,9 @@ public Pose2d getRobotPoseSOTM() {
     public Field2d getField2d(){
         return field;
     }
-    // public Field2d getField2dSOTM(){
-    //     return fieldSOTM;
-    // }
+     public Field2d getField2dSOTM(){
+         return fieldSOTM;
+     }
     public void neutralTurretMode(){
         hubTrackingEnabled= false;
         passingModeEnabled = false;
@@ -467,6 +489,7 @@ public Pose2d getRobotPoseSOTM() {
    public Alliance getAlliance(){
     return DriverStation.getAlliance().orElse(Alliance.Red);
 }
+    
     @Override
     public void periodic() {
         /*
@@ -492,15 +515,15 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
-        //fieldSOTM.setRobotPose(getRobotPoseSOTM());
+        fieldSOTM.setRobotPose(getRobotPoseSOTM());
         SmartDashboard.putData("Field",getField2d());
-        //SmartDashboard.putData("FieldSOTM",getField2dSOTM());
-        double rotation= getRobotPose().getRotation().getDegrees()-180;
-        if(rotation>180){
-            rotation-=360;
-        }else if(rotation<=-180){
-            rotation+=360;
-        }
+        SmartDashboard.putData("FieldSOTM",getField2dSOTM());
+        double rotation= getRobotPose().getRotation().getDegrees()-225;
+        // if(rotation>180){
+        //     rotation-=360;
+        // }else if(rotation<=-180){
+        //     rotation+=360;
+        // }
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees()-180);
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub()-rotation);

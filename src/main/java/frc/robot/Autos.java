@@ -85,7 +85,8 @@ public class Autos {
         AutoRoutine routine = factory.newRoutine("rightAuto");
         final AutoTrajectory startToMid = routine.trajectory("rightTrenchToMid");
         final AutoTrajectory midToShoot = routine.trajectory("rightMidToAlliance");
-        final var idle = new SwerveRequest.Idle();
+        final AutoTrajectory stopDrivetrain = routine.trajectory("Constraints");
+        final var idle = new SwerveRequest.FieldCentric().withVelocityX(0).withVelocityY(0);
         routine.active().onTrue(
             
             startToMid.resetOdometry().
