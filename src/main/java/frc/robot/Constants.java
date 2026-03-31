@@ -132,7 +132,7 @@ public final class Constants {
         public static final double shooterKv = 0.000166; // 1/6000, % Output / RPM
         public static final double shooterKa = 0; // % output / (RPM*second)
         
-        public static final double turretP = 0.008; // % output / degree
+        public static final double turretP = 0.02; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)
         public static final double turretD = 0; // % output / (degree / second)
     }

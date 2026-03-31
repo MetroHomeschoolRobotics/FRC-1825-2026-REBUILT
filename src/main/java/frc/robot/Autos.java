@@ -85,17 +85,18 @@ public class Autos {
         AutoRoutine routine = factory.newRoutine("rightAuto");
         final AutoTrajectory startToMid = routine.trajectory("rightTrenchToMid");
         final AutoTrajectory midToShoot = routine.trajectory("rightMidToAlliance");
-        final var idle = new SwerveRequest.Idle();
+        final AutoTrajectory stopDrivetrain = routine.trajectory("Constraints");
+        final var idle = new SwerveRequest.FieldCentric().withVelocityX(0).withVelocityY(0);
         routine.active().onTrue(
             
-            // startToMid.resetOdometry().
-            // andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
-            // .andThen(midToShoot.cmd())
-            // .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
-            
-            // .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5))).andThen(new SetShooterRPM(shooter,0))
-            // .andThen(drivetrain.applyRequest(()->idle))
-            startToMid.resetOdometry().andThen(startToMid.cmd()).andThen(midToShoot.cmd()).andThen(drivetrain.applyRequest(()->idle))
+            startToMid.resetOdometry().
+            andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
+            .andThen(midToShoot.cmd())
+            .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
+            .andThen(stopDrivetrain.cmd())
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),drivetrain.applyRequest(()->idle),Commands.waitSeconds(5))).andThen(new SetShooterRPM(shooter,0))
+            .andThen(drivetrain.applyRequest(()->idle))
+            //startToMid.resetOdometry().andThen(startToMid.cmd()).andThen(midToShoot.cmd()).andThen(drivetrain.applyRequest(()->idle))
             );
         return routine;
     }
