@@ -94,27 +94,31 @@ public final class Constants {
     public static class InterpolationData{
       
         public static final double[] inputs = {
-            1.49,//0
-            1.87,
-            1.92,
-            2.35,//1
-            2.65,//2
-            2.98,
-            3.26,//3
-            3.81,//4
-           4.51//5
+            1.07,//0
+            2.02,//1
+            2.55,//2
+            2.68,//3
+            2.91,//4
+            3.22,//5
+            3.65,//6
+            3.85,//7
+            4.64,//8
+            5.3, //9
+            5.7 //10
         };
         private static double rpmdrop = 0;
         public static final double[] outputs = {
-            3292-rpmdrop,//0
-            3572,
-            3701-rpmdrop,
-            3800,//1
-            4024-rpmdrop,//2
-            4125,
-            4194-rpmdrop,//3
-            4441-rpmdrop,//4
-            4764-rpmdrop//5
+           2885,//0
+           3224,//1
+           3427,//2
+           3537,//3
+           3781,//4
+           3873,//5
+           4149,//6
+           4222,//7
+           4764,//8
+           5132,//9
+           5750,//10
            
         };
         
