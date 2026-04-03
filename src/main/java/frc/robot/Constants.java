@@ -18,6 +18,8 @@ public final class Constants {
         public static final int intakeCANcoderID = 26;
 
         public static final int indexerID = 18;
+        public static final int indexerLeftID = 31;
+        public static final int indexerRightID=32;
         public static final int beltID = 19;
 
         public static final int turretMotorID = 20;
