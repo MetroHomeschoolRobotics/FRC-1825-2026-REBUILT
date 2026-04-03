@@ -33,6 +33,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -467,7 +468,8 @@ public Pose2d getRobotPoseSOTM() {
         //System.out.println("X robot: " + getRobotPose().getX() + ", X stalk: " + pose.getX());
         // This uses the distance formula to get the distance
         //double distance = Math.sqrt(Math.pow(XDir, 2) + Math.pow(yDir, 2)); 
-        double distance = pose.getTranslation().getDistance(getRobotPose().getTranslation());
+        double distance = pose.getTranslation().getDistance(getRobotPose().getTranslation()
+        .plus(new Translation2d(Units.inchesToMeters(-4),0)));
 
         return distance;
     }
@@ -517,7 +519,7 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
-        fieldSOTM.setRobotPose(getRobotPoseSOTM());
+        fieldSOTM.setRobotPose(getRobotPose().plus(new Transform2d(Units.inchesToMeters(-4),0, Rotation2d.kZero)));
         SmartDashboard.putData("Field",getField2d());
         SmartDashboard.putData("FieldSOTM",getField2dSOTM());
         double rotation= getRobotPose().getRotation().getDegrees()+134;

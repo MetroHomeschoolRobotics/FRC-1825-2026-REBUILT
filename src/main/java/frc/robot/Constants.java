@@ -75,7 +75,7 @@ public final class Constants {
         public static final double retractorRetractSpeed = 0.5;
         public static final double indexerSpeed = 0.7;
         public static final double beltSpeed = 0.5;
-        public static final double intakeSpeed = 0.4;
+        public static final double intakeSpeed = 0.6;
         public static final double turretForwardSoftLimit = 19;
         public static final double turretReverseSoftLimit = -19.6;
     }   
