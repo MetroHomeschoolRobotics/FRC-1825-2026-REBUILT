@@ -411,7 +411,9 @@ public Pose2d getRobotPoseSOTM() {
         double dx = (hubPose.getX()-getRobotPose().getX());
         double dy = (hubPose.getY()-getRobotPose().getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
-       
+       SmartDashboard.putNumber("angle to hub dx", dx);
+       SmartDashboard.putNumber("angle to hub dy", dy);
+       SmartDashboard.putNumber("angle to hub", output);
         return output;
     }
     public double angleToHubSOTM(){
@@ -518,12 +520,13 @@ public Pose2d getRobotPoseSOTM() {
         fieldSOTM.setRobotPose(getRobotPoseSOTM());
         SmartDashboard.putData("Field",getField2d());
         SmartDashboard.putData("FieldSOTM",getField2dSOTM());
-        double rotation= getRobotPose().getRotation().getDegrees()-225;
-        // if(rotation>180){
-        //     rotation-=360;
-        // }else if(rotation<=-180){
-        //     rotation+=360;
-        // }
+        double rotation= getRobotPose().getRotation().getDegrees()+134;
+        if(rotation<-270){
+            rotation+=360;
+        }else if(rotation>90){
+            rotation -=360;
+        }
+        SmartDashboard.putNumber("rotation container", rotation);
          Turret.setRobotAngle(getRobotPose().getRotation().getDegrees()-180);
         if(hubTrackingEnabled){
             Turret.turretSetSetpoint(angleToHub()-rotation);
@@ -533,6 +536,7 @@ public Pose2d getRobotPoseSOTM() {
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
             Turret.turretSetSetpoint(180);
         
+
         }else if(hubTrackingSOTMEnabled){
             Turret.turretSetSetpoint(angleToHubSOTM()-rotation);
         }
