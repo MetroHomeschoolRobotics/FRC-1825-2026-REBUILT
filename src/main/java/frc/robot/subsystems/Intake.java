@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
         
     }
     private void setConfigs(){
-        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.CurrentLimits.StatorCurrentLimit = 80; //TODO driven
         //config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public void stopIntake(){

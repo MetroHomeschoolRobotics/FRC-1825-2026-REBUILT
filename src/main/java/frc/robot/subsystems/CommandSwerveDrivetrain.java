@@ -534,9 +534,9 @@ public Pose2d getRobotPoseSOTM() {
             Turret.turretSetSetpoint(angleToHub()-rotation);
         }else if(passingModeEnabled){
             if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
-                Turret.turretSetSetpoint(0);
+                Turret.turretSetSetpoint(0-rotation);
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
-            Turret.turretSetSetpoint(180);
+            Turret.turretSetSetpoint(180-rotation);
         
 
         }else if(hubTrackingSOTMEnabled){
