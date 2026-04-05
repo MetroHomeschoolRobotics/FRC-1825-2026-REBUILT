@@ -107,7 +107,8 @@ public class Autos {
         final var idle = new SwerveRequest.Idle();
         routine.active().onTrue(
             startToShoot.resetOdometry().andThen(startToShoot.cmd()).andThen(new ParallelRaceGroup(Commands.waitSeconds(0.5),drivetrain.applyRequest(()->idle)))
-           //.andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3))
+           .andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3)))
+           .andThen(new ChangeTurretMode(drivetrain, TurretMode.HUB))
             .andThen(new ParallelRaceGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(2)))
             .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))

@@ -523,9 +523,9 @@ public Pose2d getRobotPoseSOTM() {
         SmartDashboard.putData("Field",getField2d());
         SmartDashboard.putData("FieldSOTM",getField2dSOTM());
         double rotation= getRobotPose().getRotation().getDegrees()+134;
-        if(rotation<-90){
+        if(rotation<-270){
             rotation+=360;
-        }else if(rotation>270){
+        }else if(rotation>90){
             rotation -=360;
         }
         SmartDashboard.putNumber("rotation container", rotation);
