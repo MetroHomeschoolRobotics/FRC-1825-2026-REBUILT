@@ -215,6 +215,7 @@ public class RobotContainer {
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
         turret.setPID(169);//default angle 
+        //turret.setTurretEncoder(19);
         shooter.setRPM(0);
     }
     public void periodic() {

@@ -469,7 +469,7 @@ public Pose2d getRobotPoseSOTM() {
         // This uses the distance formula to get the distance
         //double distance = Math.sqrt(Math.pow(XDir, 2) + Math.pow(yDir, 2)); 
         double distance = pose.getTranslation().getDistance(getRobotPose().getTranslation()
-        .plus(new Translation2d(Units.inchesToMeters(-4),0)));
+        .plus(new Translation2d(Units.inchesToMeters(-4.4),Units.inchesToMeters(2))));
 
         return distance;
     }

@@ -89,7 +89,7 @@ public class Turret extends SubsystemBase {
         }
         public static void setRobotAngle(double angle){
             
-            robotAngle = angle-45;
+            robotAngle = angle+45;
         }
         /**use the cancoder position with the 10:1 gear ratio to get the actual angle,
          * it also adds the robot angle
@@ -116,6 +116,7 @@ public class Turret extends SubsystemBase {
             pid.setSetpoint(angle);
         }
         public static double getAbsoluteAngle(){
+
             double output =rotationCount*9;
            
             // if(output>180){
@@ -131,16 +132,19 @@ public class Turret extends SubsystemBase {
     public void incrementTurretAngle(double input){
         setpoint+=input;
     }
+    public void setTurretEncoder(double position){
+        turret.setPosition(position);
+    }
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         
         String sameCorrectionFlag ="";
-        if(setpoint>=171){
-                setpoint-=348;
+        if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*9){
+                setpoint-=Math.abs(Constants.Setpoints.turretForwardSoftLimit*9)+Math.abs(Constants.Setpoints.turretReverseSoftLimit*9);
                 sameCorrectionFlag="125";
                 hasCorrectedPositive = true;
-            }else if(setpoint<-177){
-                setpoint+=348;
+            }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*9){
+                setpoint+=Math.abs(Constants.Setpoints.turretForwardSoftLimit*9)+Math.abs(Constants.Setpoints.turretReverseSoftLimit*9);
                 sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
