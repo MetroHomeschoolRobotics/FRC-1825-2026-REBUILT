@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -95,6 +96,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
      private static final Field2d field = new Field2d();
      private static final Field2d fieldSOTM = new Field2d();
+
+    private final Transform2d shooterTransform = new Transform2d(Units.inchesToMeters(-4.4), Units.inchesToMeters(-2), Rotation2d.kZero);
+
      private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
     //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
 
@@ -409,8 +413,8 @@ public Pose2d getRobotPoseSOTM() {
         //     (hubPose.getY()-getRobotPose().getY())
         //     /
         //     (hubPose.getX()-getRobotPose().getX())));
-        double dx = (hubPose.getX()-getRobotPose().getX());
-        double dy = (hubPose.getY()-getRobotPose().getY());
+        double dx = (hubPose.getX()-getRobotPose().plus(shooterTransform).getX());
+        double dy = (hubPose.getY()-getRobotPose().plus(shooterTransform).getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
        SmartDashboard.putNumber("angle to hub dx", dx);
        SmartDashboard.putNumber("angle to hub dy", dy);
@@ -468,8 +472,8 @@ public Pose2d getRobotPoseSOTM() {
         //System.out.println("X robot: " + getRobotPose().getX() + ", X stalk: " + pose.getX());
         // This uses the distance formula to get the distance
         //double distance = Math.sqrt(Math.pow(XDir, 2) + Math.pow(yDir, 2)); 
-        double distance = pose.getTranslation().getDistance(getRobotPose().getTranslation()
-        .plus(new Translation2d(Units.inchesToMeters(-4.4),Units.inchesToMeters(2))));
+        double distance = pose.getTranslation().getDistance(getRobotPose()
+        .plus(shooterTransform).getTranslation());
 
         return distance;
     }
@@ -519,7 +523,7 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
-        fieldSOTM.setRobotPose(getRobotPose().plus(new Transform2d(Units.inchesToMeters(-4),0, Rotation2d.kZero)));
+        fieldSOTM.setRobotPose(getRobotPose().plus(shooterTransform));
         SmartDashboard.putData("Field",getField2d());
         SmartDashboard.putData("FieldSOTM",getField2dSOTM());
         double rotation= getRobotPose().getRotation().getDegrees()+134;

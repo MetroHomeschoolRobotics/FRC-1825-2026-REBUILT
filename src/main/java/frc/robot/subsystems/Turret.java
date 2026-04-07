@@ -189,7 +189,7 @@ public class Turret extends SubsystemBase {
             turret.set(output);
         }
         
-        // TODO driven turret disable
+       
       
         SmartDashboard.putBoolean("has corrected negative", hasCorrectedNegative);
         SmartDashboard.putBoolean("has corrected positive", hasCorrectedPositive);
