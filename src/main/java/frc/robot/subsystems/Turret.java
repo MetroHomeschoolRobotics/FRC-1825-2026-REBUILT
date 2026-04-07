@@ -42,6 +42,7 @@ public class Turret extends SubsystemBase {
         private static int rotationCountInt = 0;
         private TalonFXConfiguration config = new TalonFXConfiguration();
        
+        private boolean hasEncoderReset=false;
 
 
         private boolean hasCorrectedNegative = false;
@@ -166,8 +167,11 @@ public class Turret extends SubsystemBase {
     }
     public void periodic(){
         //DOES THIS WORK, IDK
-        if(!beambreak.get()){
-            turret.setPosition(Constants.Setpoints.turretForwardSoftLimit);
+        SmartDashboard.putBoolean("turret encoder reset", hasEncoderReset);
+        if(!beambreak.get()&&turret.getPosition().getValueAsDouble()>-7){
+            turret.setPosition(19);
+            hasEncoderReset=true;
+            // TODO driven turret disable
         }
        rotationCount=turret.getPosition().getValueAsDouble();
        
@@ -181,7 +185,11 @@ public class Turret extends SubsystemBase {
         }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
             output=0;
         }
-        turret.set(output);
+        if(hasEncoderReset){
+            turret.set(output);
+        }
+        
+        // TODO driven turret disable
       
         SmartDashboard.putBoolean("has corrected negative", hasCorrectedNegative);
         SmartDashboard.putBoolean("has corrected positive", hasCorrectedPositive);

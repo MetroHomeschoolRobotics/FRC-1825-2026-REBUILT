@@ -90,7 +90,7 @@ public class RobotContainer {
         autos = new Autos(autoFactory, turret, hood, intake, indexer, shooter, drivetrain);
          createAutoChooser();
         configureBindings();
-       
+        
         DataLogManager.start();
         
     }
@@ -215,7 +215,7 @@ public class RobotContainer {
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
         turret.setPID(169);//default angle 
-        //turret.setTurretEncoder(19);
+        // TODO driven turret disable
         shooter.setRPM(0);
     }
     public void periodic() {

@@ -21,9 +21,11 @@ public class directdriveturrret extends Command {
     public void execute(){
         //TO/DO check rotation directions later
        turret.set(MathUtil.applyDeadband(-joystickInput.getRightX(),0.10));
+        // TODO driven turret disable
     }
     public void end(boolean interrupted){
        turret.set(0);
+       // TODO driven turret disable
     }
     public boolean isFinished(){
         return false;
