@@ -146,7 +146,7 @@ public final class Constants {
     public static final Transform3d frontLeftTranslation = new Transform3d(
         Units.inchesToMeters(-10.6),
         Units.inchesToMeters(10.8), // 11.29
-        Units.inchesToMeters(6.09),
+        Units.inchesToMeters(7.85),
         new Rotation3d(
             Units.degreesToRadians(0),
             Units.degreesToRadians(-30),

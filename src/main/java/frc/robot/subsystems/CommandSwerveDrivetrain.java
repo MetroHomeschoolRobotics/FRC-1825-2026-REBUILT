@@ -422,8 +422,8 @@ public Pose2d getRobotPoseSOTM() {
         return output;
     }
     public double angleToHubSOTM(){
-        double dx = (hubPose.getX()-getRobotPoseSOTM().getX());
-        double dy = (hubPose.getY()-getRobotPoseSOTM().getY());
+        double dx = (hubPose.getX()-getRobotPoseSOTM().plus(shooterTransform).getX());
+        double dy = (hubPose.getY()-getRobotPoseSOTM().plus(shooterTransform).getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
        
         return output;
@@ -480,7 +480,7 @@ public Pose2d getRobotPoseSOTM() {
     public double distanceToPoseSOTM(Pose2d pose) {
 
         // difference in x and y
-        double distance = pose.getTranslation().getDistance(getRobotPoseSOTM().getTranslation());
+        double distance = pose.getTranslation().getDistance(getRobotPoseSOTM().plus(shooterTransform).getTranslation());
 
         return distance;
     }
