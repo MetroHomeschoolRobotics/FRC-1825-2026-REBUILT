@@ -38,9 +38,15 @@ public final class Constants {
         public static final double shooterWheelCircumference = 2*Math.PI*shooterWheelRadius;
     }
     public static class FieldSetpoints{
-      
-        public static final Pose2d blueHubPose = new Pose2d(Units.inchesToMeters(181.56),Units.inchesToMeters(158), Rotation2d.kZero);
-        public static final Pose2d redHubPose = new Pose2d(Units.inchesToMeters(469.62),Units.inchesToMeters(158), Rotation2d.kZero);
+      private static final double hubFudge = 0; //moves the setpoint toward the center of the field
+        public static final Pose2d blueHubPose = new Pose2d(
+            Units.inchesToMeters(181.56+hubFudge),
+            Units.inchesToMeters(158), 
+            Rotation2d.kZero);
+        public static final Pose2d redHubPose = new Pose2d(
+            Units.inchesToMeters(469.62-hubFudge),
+            Units.inchesToMeters(158),
+             Rotation2d.kZero);
         
          public static final double blueAllianceZoneX= Units.inchesToMeters(144.19);
         public static final double redAllianceZoneX = Units.inchesToMeters(464.63);
@@ -108,19 +114,19 @@ public final class Constants {
             5.3, //9
             5.7 //10
         };
-        private static double rpmdrop = 0;
+        private static double rpmdrop = 200;
         public static final double[] outputs = {
-           2885,//0
-           3224,//1
-           3427,//2
-           3537,//3
-           3781,//4
-           3873,//5
-           4149,//6
-           4222,//7
-           4764,//8
-           5132,//9
-           5750,//10
+           2885-rpmdrop,//0
+           3224-rpmdrop,//1
+           3427-rpmdrop,//2
+           3537-rpmdrop,//3
+           3781-rpmdrop,//4
+           3873-rpmdrop,//5
+           4149-rpmdrop,//6
+           4222-rpmdrop,//7
+           4764-rpmdrop,//8
+           5132-rpmdrop,//9
+           5750-rpmdrop,//10
            
         };
         

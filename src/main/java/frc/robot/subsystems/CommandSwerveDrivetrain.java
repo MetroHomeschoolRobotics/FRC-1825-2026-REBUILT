@@ -523,10 +523,10 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
-        fieldSOTM.setRobotPose(getRobotPose().plus(shooterTransform));
+        fieldSOTM.setRobotPose(hubPose);
         SmartDashboard.putData("Field",getField2d());
         SmartDashboard.putData("FieldSOTM",getField2dSOTM());
-        double rotation= getRobotPose().getRotation().getDegrees()+134;
+        double rotation= getRobotPose().getRotation().getDegrees()+143;
         if(rotation<-270){
             rotation+=360;
         }else if(rotation>90){
