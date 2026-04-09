@@ -6,15 +6,18 @@ import frc.robot.subsystems.Shooter;
 public class SetShooterRPM extends Command{
     private Shooter shooter;
     private double RPM;
+    /**
+    * This command never ends, so you must end it either manually or with a timer
+    */
     public SetShooterRPM(Shooter _shooter,double _RPM){
         addRequirements(_shooter);
         shooter=_shooter;
         RPM=_RPM;
     }
-    public void initialize(){}
+    public void initialize(){shooter.setRPM(RPM);}
     public void execute(){
-        shooter.setRPM(RPM);
+        
     }
     public void end(boolean interrupted){}
-    public boolean isFinished(){return false;}
+    public boolean isFinished(){return true;}
 }

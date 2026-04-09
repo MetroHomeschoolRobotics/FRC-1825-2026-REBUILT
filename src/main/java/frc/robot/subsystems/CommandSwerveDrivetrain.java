@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -33,7 +34,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -87,9 +90,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private boolean hubTrackingEnabled = false;
     private boolean passingModeEnabled = false;
+    private boolean hubTrackingSOTMEnabled = false;
     private Pose2d hubPose;
+    private InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
      private static final Field2d field = new Field2d();
+     private static final Field2d fieldSOTM = new Field2d();
+
+    private final Transform2d shooterTransform = new Transform2d(Units.inchesToMeters(-4.4), Units.inchesToMeters(-2), Rotation2d.kZero);
+
      private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
     //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
 
@@ -153,7 +162,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
     }
-  
+    
     /*
      * SysId routine for characterizing rotation.
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
@@ -212,6 +221,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DriverStation.reportWarning("Vision pose failed: " + resultingError.getMessage(), false);
     }
     configureAutoBuilder();
+    fillTimeOfFlightLUT();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -237,6 +247,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
+        fillTimeOfFlightLUT();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -272,6 +283,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
         
         configureAutoBuilder();
+        fillTimeOfFlightLUT();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -297,12 +309,42 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
+    public void fillTimeOfFlightLUT(){
+        double[] inputs = Constants.TimeOfFlightLUT.inputs;
+        double[] outputs = Constants.TimeOfFlightLUT.outputs;
+        for(int i=0; i< inputs.length;i++){
+            timeOfFlight.put(inputs[i], outputs[i]);
+        }
+    }
     public Pose2d getRobotPose(){
+        
         return this.getState().Pose;
     }
+public Pose2d SOTMtest(){
+final double flightTime = timeOfFlight.get(distanceToPoseSOTM(hubPose)); // seconds
 
+    // getState().Speeds is robot-relative — convert to field-relative
+    // using the robot's current heading
+    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+        this.getState().Speeds,
+        this.getState().Pose.getRotation()
+    );
+
+    // Multiply velocity (m/s) by time (s) to get a position offset (m)
+    Translation2d velocityOffset = new Translation2d(
+        fieldRelativeSpeeds.vxMetersPerSecond * flightTime,
+        fieldRelativeSpeeds.vyMetersPerSecond * flightTime
+    );
+
+    // Add the offset to the current pose's translation
+    // Rotation stays the same — we're offsetting position, not heading
+    return new Pose2d(
+        this.getState().Pose.getTranslation().plus(velocityOffset),
+        this.getState().Pose.getRotation()
+    );
+}
 public Pose2d getRobotPoseSOTM() {
-    final double flightTime = 1.65; // seconds
+    final double flightTime = timeOfFlight.get(distanceToPose(hubPose)); // seconds
 
     // getState().Speeds is robot-relative — convert to field-relative
     // using the robot's current heading
@@ -328,17 +370,28 @@ public Pose2d getRobotPoseSOTM() {
     public Field2d getField2d(){
         return field;
     }
+     public Field2d getField2dSOTM(){
+         return fieldSOTM;
+     }
     public void neutralTurretMode(){
         hubTrackingEnabled= false;
         passingModeEnabled = false;
+        hubTrackingSOTMEnabled = false;
+    }
+    public void SOTMTurretMode(){
+        hubTrackingEnabled= false;
+        passingModeEnabled = false;
+        hubTrackingSOTMEnabled = true;
     }
     public void hubTurretMode(){
         hubTrackingEnabled = true;
         passingModeEnabled = false;
+        hubTrackingSOTMEnabled = false;
     }
     public void passingTurretMode(){
         hubTrackingEnabled = false;
         passingModeEnabled = true;
+        hubTrackingSOTMEnabled = false;
     }
     public void toggleHubTracking(){
         if(hubTrackingEnabled==true){
@@ -360,15 +413,19 @@ public Pose2d getRobotPoseSOTM() {
         //     (hubPose.getY()-getRobotPose().getY())
         //     /
         //     (hubPose.getX()-getRobotPose().getX())));
-        double dx = (hubPose.getX()-getRobotPose().getX());
-        double dy = (hubPose.getY()-getRobotPose().getY());
+        double dx = (hubPose.getX()-getRobotPose().plus(shooterTransform).getX());
+        double dy = (hubPose.getY()-getRobotPose().plus(shooterTransform).getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
-        if(hubPose.getX()-getRobotPose().getX()<0){
-            output+=180;
-            if(output >180){
-                output -=360;
-            }
-        }
+       SmartDashboard.putNumber("angle to hub dx", dx);
+       SmartDashboard.putNumber("angle to hub dy", dy);
+       SmartDashboard.putNumber("angle to hub", output);
+        return output;
+    }
+    public double angleToHubSOTM(){
+        double dx = (hubPose.getX()-getRobotPoseSOTM().plus(shooterTransform).getX());
+        double dy = (hubPose.getY()-getRobotPoseSOTM().plus(shooterTransform).getY());
+        double output = Units.radiansToDegrees(Math.atan2(dy, dx));
+       
         return output;
     }
     public void followPath(SwerveSample sample) {
@@ -415,11 +472,18 @@ public Pose2d getRobotPoseSOTM() {
         //System.out.println("X robot: " + getRobotPose().getX() + ", X stalk: " + pose.getX());
         // This uses the distance formula to get the distance
         //double distance = Math.sqrt(Math.pow(XDir, 2) + Math.pow(yDir, 2)); 
-        double distance = pose.getTranslation().getDistance(getRobotPose().getTranslation());
+        double distance = pose.getTranslation().getDistance(getRobotPose()
+        .plus(shooterTransform).getTranslation());
 
         return distance;
     }
-   
+    public double distanceToPoseSOTM(Pose2d pose) {
+
+        // difference in x and y
+        double distance = pose.getTranslation().getDistance(getRobotPoseSOTM().plus(shooterTransform).getTranslation());
+
+        return distance;
+    }
     /**
      * Runs the SysId Dynamic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -433,6 +497,7 @@ public Pose2d getRobotPoseSOTM() {
    public Alliance getAlliance(){
     return DriverStation.getAlliance().orElse(Alliance.Red);
 }
+    
     @Override
     public void periodic() {
         /*
@@ -443,7 +508,9 @@ public Pose2d getRobotPoseSOTM() {
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
         SmartDashboard.putNumber("dist to red hub", distanceToPose(hubPose));
-       
+        SmartDashboard.putNumber("angletoHubSOTM", angleToHubSOTM());
+        SmartDashboard.putNumber("angletohub", angleToHub());
+        SmartDashboard.putNumber("drivetrain rotation", getRobotPose().getRotation().getDegrees());
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -456,17 +523,30 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
+        fieldSOTM.setRobotPose(hubPose);
         SmartDashboard.putData("Field",getField2d());
-        
-         Turret.setRobotAngle(getRobotPose().getRotation().getDegrees());
+        SmartDashboard.putData("FieldSOTM",getField2dSOTM());
+        double rotation= getRobotPose().getRotation().getDegrees()+143;
+        if(rotation<-270){
+            rotation+=360;
+        }else if(rotation>90){
+            rotation -=360;
+        }
+        SmartDashboard.putNumber("rotation container", rotation);
+         Turret.setRobotAngle(getRobotPose().getRotation().getDegrees()-180);
         if(hubTrackingEnabled){
-            Turret.turretSetSetpoint(angleToHub());
+            Turret.turretSetSetpoint(angleToHub()-rotation);
         }else if(passingModeEnabled){
             if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue){
-                Turret.turretSetSetpoint(0);
+                Turret.turretSetSetpoint(0-rotation);
             }else if(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
-            Turret.turretSetSetpoint(180);
+            Turret.turretSetSetpoint(180-rotation);
+        
+
+        }else if(hubTrackingSOTMEnabled){
+            Turret.turretSetSetpoint(angleToHubSOTM()-rotation);
         }
+       
         // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
         //    addVisionPose(FrontLeftCamera);
         // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){

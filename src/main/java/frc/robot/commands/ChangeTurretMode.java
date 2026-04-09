@@ -29,7 +29,11 @@ public class ChangeTurretMode extends Command {
             case NEUTRAL:
                 drivetrain.neutralTurretMode();
                 break; 
+            case HUBSOTM:
+                drivetrain.SOTMTurretMode();
+            break;
             default:
+
                 break;
         }
     }

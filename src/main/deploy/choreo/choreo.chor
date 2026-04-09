@@ -14,8 +14,8 @@
    "maxAngVel":{
     "dimension":"Number",
     "var":{
-     "exp":"360",
-     "val":360.0
+     "exp":"540",
+     "val":540.0
     }
    },
    "maxVelocity":{
