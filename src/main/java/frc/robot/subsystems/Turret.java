@@ -149,20 +149,15 @@ public class Turret extends SubsystemBase {
                 sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
-        // if(getAbsoluteAngle()>=171){
             
-        //         setpoint-=355.5;
-        //         hasCorrectedPositive = true;
-                
-        //     }else if(getAbsoluteAngle()<-184.5){
-               
-        //         setpoint+=355.5;
-        //         hasCorrectedNegative=true;
-        //     }
-        //     if(getAbsoluteAngle()<20&&getAbsoluteAngle()>-20){
-        //         hasCorrectedNegative=false;
-        //         hasCorrectedPositive=false;
-        //     }
+            //May work idk for sure
+            // if(setpoint>Constants.Setpoints.turretForwardSoftLimit){
+            //     setpoint-=360;
+            // }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit){
+            //     setpoint+=360;
+            // }
+            // setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
+
         pid.setSetpoint(setpoint);
     }
     public void periodic(){
