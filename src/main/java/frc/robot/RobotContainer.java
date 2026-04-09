@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
+import frc.robot.commands.DriveToFeed;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
 import frc.robot.commands.PointToHub;
@@ -107,7 +108,7 @@ public class RobotContainer {
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-        driverXbox.x().whileTrue(new RunIntakeBackwards(intake));
+       driverXbox.x().whileTrue(new DriveToFeed(drivetrain));
         driverXbox.rightBumper().whileTrue((drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
         .withVelocityY(-driverXbox.getLeftY()).withHeadingPID(11.13,0,0.169)
         .withTargetDirection( new Rotation2d(drivetrain.angleToHub()-90)))));
@@ -151,7 +152,7 @@ public class RobotContainer {
         // Starts the turret and hood tracking the hub       
         manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
         // Starts the turret and hood tracking the alliance wall
-        manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.PASSING).andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
+        manipulatorXbox.x().whileTrue(new RunIntakeBackwards(intake));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.NEUTRAL));
        
         manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUBSOTM)

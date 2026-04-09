@@ -149,6 +149,7 @@ public class Turret extends SubsystemBase {
                 sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
+            setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
         // if(getAbsoluteAngle()>=171){
             
         //         setpoint-=355.5;
