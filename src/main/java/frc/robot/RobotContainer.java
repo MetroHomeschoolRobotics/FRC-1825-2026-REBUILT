@@ -201,11 +201,12 @@ public class RobotContainer {
     }
   
     private void createAutoChooser(){
-        autoChooser.addRoutine("left", autos::leftAuto);
+        autoChooser.addRoutine("left greedy", autos::leftAuto);
         autoChooser.addRoutine("right", autos::rightAuto);
         autoChooser.addRoutine("center", autos::midAuto);
         autoChooser.addRoutine("centerShoot8", autos::centerShoot8);
         autoChooser.addRoutine("stationaryShoot8", autos::stationaryShoot8);
+        autoChooser.addRoutine("center Depot stay", autos::centerShoot8StayDepot);
         SmartDashboard.putData("auto chooser",autoChooser);
     }
     public void test(){
