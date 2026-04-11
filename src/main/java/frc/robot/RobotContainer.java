@@ -35,6 +35,7 @@ import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToFeed;
+import frc.robot.commands.FlickerIntakeUp;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
 import frc.robot.commands.PointToHub;
@@ -166,8 +167,8 @@ public class RobotContainer {
         manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
         //Runs the indexer
         manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer,shooter));
-        //Runs the shooter at a preset RPM, and runs the indexer
-        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,1500).andThen(new RunFullIndexing(indexer,shooter))); 
+        //turns the retractor on and off on a .2 sec interval
+        manipulatorXbox.rightTrigger().whileTrue(new FlickerIntakeUp(intake)); 
 
         manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));

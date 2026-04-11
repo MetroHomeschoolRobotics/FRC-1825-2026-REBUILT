@@ -101,12 +101,13 @@ public class Autos {
             startToMid.resetOdometry().
             andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
             .andThen(midToShoot.cmd())
-            .andThen(drivetrain.applyRequest(()->idle))
+           .andThen(new ParallelRaceGroup(drivetrain.applyRequest(()->idle),Commands.waitSeconds(0.02)))
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             .andThen(Commands.waitSeconds(1))
          
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(3.5))).andThen(new SetShooterRPM(shooter,0))
-            .andThen(startToMid.cmd())   
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(2.5))).andThen(new SetShooterRPM(shooter,0))
+            .andThen(startToMid.cmd()).alongWith(new RunIntake(intake))
+            .andThen(drivetrain.applyRequest(()->idle))
 
             //startToMid.resetOdometry().andThen(startToMid.cmd()).andThen(midToShoot.cmd()).andThen(drivetrain.applyRequest(()->idle))
             );
