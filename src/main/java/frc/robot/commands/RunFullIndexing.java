@@ -19,13 +19,14 @@ public class RunFullIndexing extends Command {
     }
     public void execute(){
         //TO/DO check rotation directions later
-        if(forward%5==0||forward%5==1){
-            indexer.setBeltSpeed(-Constants.Setpoints.beltSpeed);
-            forward ++;
-        }else{
-            indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
-            forward ++;
-        }
+        // if(forward%5==0||forward%5==1){
+        //     indexer.setBeltSpeed(-Constants.Setpoints.beltSpeed);
+        //     forward ++;
+        // }else{
+        //     indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
+        //     forward ++;
+        // }
+        indexer.setBeltSpeed(Constants.Setpoints.beltSpeed);
         
         indexer.setIndexerSpeed(Constants.Setpoints.indexerSpeed);
     }

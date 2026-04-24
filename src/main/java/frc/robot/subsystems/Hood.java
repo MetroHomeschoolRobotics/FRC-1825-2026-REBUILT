@@ -15,13 +15,13 @@ public class Hood extends SubsystemBase {
     
     
     
-    private CANdi CANDi= new CANdi(Constants.MotorIDs.CANDiId); 
+    //private CANdi CANDi= new CANdi(Constants.MotorIDs.CANDiId); 
     private Spark hood1 = new Spark(Constants.MotorIDs.hoodID1);
     private Spark hood2 = new Spark(Constants.MotorIDs.hoodID2);
     private PIDController pid = new PIDController(Constants.PIDConstants.hoodP, Constants.PIDConstants.hoodI, Constants.PIDConstants.hoodD);
 
     private PWMSim hood1Sim = new PWMSim(Constants.MotorIDs.hoodID1);
-    private CANdiSimState CANdiSim = new CANdiSimState(CANDi);
+   // private CANdiSimState CANdiSim = new CANdiSimState(CANDi);
 
     private static final double kSimLoopPeriod = 0.002; // 2 ms
     private Notifier simNotifier = null;
@@ -39,11 +39,12 @@ public class Hood extends SubsystemBase {
         
     }
     public double getAngle(){
-        return Constants.Setpoints.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
-        ;
+       // return Constants.Setpoints.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
+        return 0;
     }
     public double getPwmPosition(){
-        return CANDi.getPWM1Position().getValueAsDouble();
+       // return CANDi.getPWM1Position().getValueAsDouble();
+       return 0;
     }
     
 
@@ -57,7 +58,7 @@ public class Hood extends SubsystemBase {
         //This dont work
         
         double output = pid.calculate(getAngle());
-        CANdiSim.setPwm1Velocity(output);
+        //CANdiSim.setPwm1Velocity(output);
         setSpeed(output);
         
         double speed = hood1Sim.getSpeed();

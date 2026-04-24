@@ -24,8 +24,8 @@ public class Indexer extends SubsystemBase{
 
     public void setIndexerSpeed(double speed){
         indexer.set(speed);
-        indexerLeft.set(speed/2);
-        indexerRight.set(-speed/2);
+        indexerLeft.set(speed);
+        indexerRight.set(-speed);
     }
     private void setConfigs(){
         config.CurrentLimits.StatorCurrentLimit = 40;

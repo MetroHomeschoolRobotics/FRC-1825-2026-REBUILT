@@ -84,8 +84,8 @@ public final class Constants {
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
         public static final double retractorRetractSpeed = 0.75; //TODO driven
-        public static final double indexerSpeed = 0.7;
-        public static final double beltSpeed = 0.5;
+        public static final double indexerSpeed = 1;
+        public static final double beltSpeed = 0.75;
         public static final double intakeSpeed = 0.4; //TODO driven
         public static final double turretForwardSoftLimit = 18;
         public static final double turretReverseSoftLimit = -19;
