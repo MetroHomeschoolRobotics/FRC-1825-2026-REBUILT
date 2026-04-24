@@ -53,6 +53,11 @@ public final class Constants {
         public static final double upperYValue = Units.inchesToMeters(181.5+29);
         public static final double lowerYValue = Units.inchesToMeters(181.5-29);
         
+        public static final Pose2d redLowerFeedPose = new Pose2d(Units.inchesToMeters(325),Units.inchesToMeters(20),Rotation2d.kZero);
+        public static final Pose2d redUpperFeedPose = new Pose2d(Units.inchesToMeters(325),Units.inchesToMeters(316-20),Rotation2d.kZero);
+        public static final Pose2d blueLowerFeedPose = new Pose2d(Units.inchesToMeters(275),Units.inchesToMeters(20),Rotation2d.k180deg);
+        public static final Pose2d blueUpperFeedPose = new Pose2d(Units.inchesToMeters(275),Units.inchesToMeters(316-20),Rotation2d.k180deg);
+
         public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     }
     public static class TimerConstants{

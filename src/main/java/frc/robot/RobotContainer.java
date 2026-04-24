@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
 import frc.robot.commands.DeployIntake;
+import frc.robot.commands.DriveToFeed;
+import frc.robot.commands.FlickerIntakeUp;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
 import frc.robot.commands.PointToHub;
@@ -107,7 +109,7 @@ public class RobotContainer {
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-        driverXbox.x().whileTrue(new RunIntakeBackwards(intake));
+       driverXbox.x().whileTrue(new DriveToFeed(drivetrain));
         driverXbox.rightBumper().whileTrue((drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
         .withVelocityY(-driverXbox.getLeftY()).withHeadingPID(11.13,0,0.169)
         .withTargetDirection( new Rotation2d(drivetrain.angleToHub()-90)))));
@@ -151,7 +153,7 @@ public class RobotContainer {
         // Starts the turret and hood tracking the hub       
         manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
         // Starts the turret and hood tracking the alliance wall
-        manipulatorXbox.x().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.PASSING).andThen(new SetHoodAngle(hood, Constants.Setpoints.passingHoodAngle)));
+        manipulatorXbox.x().whileTrue(new RunIntakeBackwards(intake));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.NEUTRAL));
        
         manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUBSOTM)
@@ -165,8 +167,8 @@ public class RobotContainer {
         manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
         //Runs the indexer
         manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer,shooter));
-        //Runs the shooter at a preset RPM, and runs the indexer
-        manipulatorXbox.rightTrigger().whileTrue(new SetShooterRPM( shooter,1500).andThen(new RunFullIndexing(indexer,shooter))); 
+        //turns the retractor on and off on a .2 sec interval
+        manipulatorXbox.rightTrigger().whileTrue(new FlickerIntakeUp(intake)); 
 
         manipulatorXbox.povLeft().whileTrue(new SetShooterRPM(shooter, 0));
         manipulatorXbox.povDown().whileTrue(new DeployIntake(intake));
@@ -200,11 +202,12 @@ public class RobotContainer {
     }
   
     private void createAutoChooser(){
-        autoChooser.addRoutine("left", autos::leftAuto);
+        autoChooser.addRoutine("left greedy", autos::leftAuto);
         autoChooser.addRoutine("right", autos::rightAuto);
         autoChooser.addRoutine("center", autos::midAuto);
         autoChooser.addRoutine("centerShoot8", autos::centerShoot8);
         autoChooser.addRoutine("stationaryShoot8", autos::stationaryShoot8);
+        autoChooser.addRoutine("center Depot stay", autos::centerShoot8StayDepot);
         SmartDashboard.putData("auto chooser",autoChooser);
     }
     public void test(){

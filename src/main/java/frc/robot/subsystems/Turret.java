@@ -141,14 +141,15 @@ public class Turret extends SubsystemBase {
         
         String sameCorrectionFlag ="";
         if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*9){
-                setpoint-=Math.abs(Constants.Setpoints.turretForwardSoftLimit*9)+Math.abs(Constants.Setpoints.turretReverseSoftLimit*9);
+                setpoint-=360;
                 sameCorrectionFlag="125";
                 hasCorrectedPositive = true;
             }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*9){
-                setpoint+=Math.abs(Constants.Setpoints.turretForwardSoftLimit*9)+Math.abs(Constants.Setpoints.turretReverseSoftLimit*9);
+                setpoint+=360;
                 sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
+            setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
         // if(getAbsoluteAngle()>=171){
             
         //         setpoint-=355.5;
