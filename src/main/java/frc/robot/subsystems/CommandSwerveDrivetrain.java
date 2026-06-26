@@ -99,8 +99,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private final Transform2d shooterTransform = new Transform2d(Units.inchesToMeters(-4.4), Units.inchesToMeters(-2), Rotation2d.kZero);
 
-     private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
-    //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
+     private final TagTracking RearLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.rearLeftTranslation);
+     private final TagTracking RearRightCamera = new TagTracking("Camera_Red", Constants.CameraPositions.rearRightTranslation);
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -554,7 +554,8 @@ public Pose2d getRobotPoseSOTM() {
         // }else{
 
         //     addVisionPose(FrontRightCamera);
-            addVisionPose(FrontLeftCamera);
+        addVisionPose(RearLeftCamera);
+        addVisionPose(RearRightCamera);
        //} 
        // Object stuff
             // if(FrontRightCamera.hasTargets()){

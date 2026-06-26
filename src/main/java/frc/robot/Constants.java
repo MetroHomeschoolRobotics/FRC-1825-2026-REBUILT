@@ -154,24 +154,24 @@ public final class Constants {
         public static final double turretD = 0; // % output / (degree / second)
     }
     public static class CameraPositions {
-    public static final Transform3d frontLeftTranslation = new Transform3d(
-        Units.inchesToMeters(-10.6),
-        Units.inchesToMeters(10.8), // 11.29
-        Units.inchesToMeters(7.85),
-        new Rotation3d(
-            Units.degreesToRadians(0),
-            Units.degreesToRadians(-30),
-            Units.degreesToRadians(90)));
+        // X is defined as forward and Y is defined as left. 
+        public static final Transform3d rearLeftTranslation = new Transform3d(
+            Units.inchesToMeters(-10.6),
+            Units.inchesToMeters(10.8), // 11.29
+            Units.inchesToMeters(7.85),
+            new Rotation3d(
+                Units.degreesToRadians(0),
+                Units.degreesToRadians(-30),
+                Units.degreesToRadians(90)));
 
-//     public static final Transform3d frontRightTranslation = new Transform3d(
-//         Units.inchesToMeters(-10.9),
-//         Units.inchesToMeters(10.8), // -11.29
-//         Units.inchesToMeters(9.2),
-//         new Rotation3d(
-//             Units.degreesToRadians(0),
-//             Units.degreesToRadians(0),
-//             Units.degreesToRadians(0)));
-                                                              
+        public static final Transform3d rearRightTranslation = new Transform3d(
+            Units.inchesToMeters(-11.24),
+            Units.inchesToMeters(-12.59),
+            Units.inchesToMeters(5.83),
+            new Rotation3d(
+                Units.degreesToRadians(0),
+                Units.degreesToRadians(-30),
+                Units.degreesToRadians(270)));                                                     
    }
    public enum TurretMode { HUB, PASSING, NEUTRAL, HUBSOTM };
  }
