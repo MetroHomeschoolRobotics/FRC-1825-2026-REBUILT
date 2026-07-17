@@ -53,7 +53,7 @@ public class Autos {
         .andThen(startToShoot.cmd())
         .andThen(new ParallelDeadlineGroup(shootToDepot.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
         .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
-        .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+        .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter,0))
             // startToShoot.resetOdometry()
             // .andThen(new ChangeTurretMode(drivetrain, "Hub"))
@@ -78,7 +78,7 @@ public class Autos {
                   .andThen(midToShoot.cmd()).alongWith(new ChangeTurretMode(drivetrain,TurretMode.HUB))
                   .andThen(drivetrain.applyRequest(()->idle))
                   .andThen(new SequentialCommandGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(1.5)))
-                  .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer, shooter),new RunIntake(intake), Commands.waitSeconds(4)))
+                  .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),new RunIntake(intake), Commands.waitSeconds(4)))
                   .andThen(new SetShooterRPM(shooter, 0))
             // andThen(new ParallelDeadlineGroup(startToMid.cmd(),new SequentialCommandGroup(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)),new RunIntake(intake))))
             // .andThen(midToShoot.cmd())
@@ -105,7 +105,7 @@ public class Autos {
             .andThen(new SequentialCommandGroup(new ChangeTurretMode(drivetrain, TurretMode.HUB),new SetInterpolatedShooterRPM(drivetrain, shooter)))
             .andThen(Commands.waitSeconds(1))
          
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(2.5))).andThen(new SetShooterRPM(shooter,0))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(2.5))).andThen(new SetShooterRPM(shooter,0))
             .andThen(startToMid.cmd()).alongWith(new RunIntake(intake))
             .andThen(drivetrain.applyRequest(()->idle))
 
@@ -124,12 +124,12 @@ public class Autos {
            .andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3)))
            .andThen(new ChangeTurretMode(drivetrain, TurretMode.HUB))
             .andThen(new ParallelRaceGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(2)))
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))
             .andThen(new ParallelDeadlineGroup(shootingToDepot.cmd(), new SequentialCommandGroup(Commands.waitSeconds(2),new RunIntake(intake))))
             .andThen(drivetrain.applyRequest(()->idle))
             .andThen(new SetInterpolatedShooterRPM(drivetrain, shooter))
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))
         
             );
@@ -146,11 +146,11 @@ public class Autos {
            .andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.3)))
            .andThen(new ChangeTurretMode(drivetrain, TurretMode.HUB))
             .andThen(new ParallelRaceGroup(new SetInterpolatedShooterRPM(drivetrain,shooter),Commands.waitSeconds(2)))
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))
             .andThen(new ParallelDeadlineGroup(shootingToDepot.cmd(), new SequentialCommandGroup(Commands.waitSeconds(2),new RunIntake(intake))))
             .andThen(new SetInterpolatedShooterRPM(drivetrain, shooter))
-            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+            .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))
         
             );
@@ -166,7 +166,7 @@ public class Autos {
            .andThen(new ParallelRaceGroup(new DeployIntake(intake),Commands.waitSeconds(0.5)))
            .andThen(new ParallelRaceGroup(new SetShooterRPM(shooter, 3600),Commands.waitSeconds(2)))
            .andThen(Commands.waitSeconds(3))
-           .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer,shooter),Commands.waitSeconds(5)))
+           .andThen(new ParallelRaceGroup(new RunFullIndexing(indexer),Commands.waitSeconds(5)))
             .andThen(new SetShooterRPM(shooter, 0))
            
         );

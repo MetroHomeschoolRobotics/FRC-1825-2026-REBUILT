@@ -2,17 +2,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Shooter;
 import frc.robot.Constants;
 
 public class RunFullIndexing extends Command {
     private Indexer indexer;
-    private Shooter shooter;
     // private double forward = 0;
-    public RunFullIndexing(Indexer _indexer,Shooter _shooter){
+    public RunFullIndexing(Indexer _indexer){
         indexer = _indexer;
         addRequirements(_indexer);
-       shooter = _shooter;
     }
     public void initialize(){
         //  forward = 0;
@@ -32,7 +29,6 @@ public class RunFullIndexing extends Command {
     public void end(boolean interrupted){
         indexer.stopBelt();
         indexer.stopIndexer();
-       // shooter.setRPM(0);
     }
     public boolean isFinished(){
         return false;

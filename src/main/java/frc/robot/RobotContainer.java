@@ -146,7 +146,7 @@ public class RobotContainer {
         driverXbox.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         // Actually start shooter, into the hub
-        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer,shooter))); 
+        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer))); 
         // Starts the turret and hood tracking the hub       
         manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
         // Starts the turret and hood tracking the alliance wall
@@ -155,7 +155,7 @@ public class RobotContainer {
        
         manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUBSOTM)
         .andThen(new SetInterpolatedShooterRPMSOTM(drivetrain,shooter))
-        .alongWith(new SequentialCommandGroup(Commands.waitSeconds(0.7),new RunFullIndexing(indexer, shooter))));
+        .alongWith(new SequentialCommandGroup(Commands.waitSeconds(0.7),new RunFullIndexing(indexer))));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
         
@@ -163,7 +163,7 @@ public class RobotContainer {
         //Spins up the shooter to shooter into the hub, but doesn't run the indexer
         manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
         //Runs the indexer
-        manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer,shooter));
+        manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer));
         //turns the retractor on and off on a .2 sec interval
         manipulatorXbox.rightTrigger().whileTrue(new FlickerIntakeUp(intake)); 
 
