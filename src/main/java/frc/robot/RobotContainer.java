@@ -6,30 +6,31 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.logging.Logger;
+// import java.util.logging.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-import choreo.auto.AutoRoutine;
+// import choreo.auto.AutoRoutine;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+//import edu.wpi.first.math.filter.SlewRateLimiter;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.wpilibj2.command.InstantCommand;
+// import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
@@ -38,7 +39,6 @@ import frc.robot.commands.DriveToFeed;
 import frc.robot.commands.FlickerIntakeUp;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
-import frc.robot.commands.PointToHub;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunFullIndexing;
 import frc.robot.commands.RunIntake;
@@ -47,8 +47,6 @@ import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetInterpolatedShooterRPM;
 import frc.robot.commands.SetInterpolatedShooterRPMSOTM;
 import frc.robot.commands.SetShooterRPM;
-import frc.robot.commands.SetTurretAngle;
-import frc.robot.commands.directdriveturrret;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
@@ -56,7 +54,9 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
-
+// import frc.robot.commands.PointToHub;
+// import frc.robot.commands.SetTurretAngle;
+// import frc.robot.commands.directdriveturrret;
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -68,7 +68,6 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.FieldCentricFacingAngle point = new SwerveRequest.FieldCentricFacingAngle();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController driverXbox = new CommandXboxController(0);
     private final CommandXboxController manipulatorXbox = new CommandXboxController(1);
@@ -82,7 +81,6 @@ public class RobotContainer {
     public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
     //public final directdriveturrret incrementTurretAngle = new directdriveturrret(turret, manipulatorXbox);//IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
-    private final SlewRateLimiter slewRateLimiter = new SlewRateLimiter(3);
     private final AutoChooser autoChooser = new AutoChooser();
     private final AutoFactory autoFactory;
     private double angleToHubContainer = 0;
@@ -102,7 +100,6 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
-            //TODO check w/ Austin on this idea
             drivetrain.applyRequest(() ->
                 drive.withVelocityX((Math.pow(-driverXbox.getLeftY(),3)) * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
                     .withVelocityY((Math.pow(-driverXbox.getLeftX(),3)) * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
@@ -179,26 +176,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        // final var idle = new SwerveRequest.Idle();
-        // return Commands.sequence(
-        //     // Reset our field centric heading to match the robot
-        //     // facing away from our alliance station wall (0 deg).
-        //     drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        //     // Then slowly drive forward (away from us) for 5 seconds.
-        //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(0.5)
-        //             .withVelocityY(0)
-        //             .withRotationalRate(0)
-        //     )
-        //     .withTimeout(5.0),
-        //     // Finally idle for the rest of auton
-        //     drivetrain.applyRequest(() -> idle)
-        // );
         return autoChooser.selectedCommand();
-    }
-    private void updateContainer(){
-    angleToHubContainer = drivetrain.angleToHub();
     }
   
     private void createAutoChooser(){
@@ -218,7 +196,6 @@ public class RobotContainer {
     public void startUp(){
         hood.setPID(Constants.Setpoints.defaultHoodAngle);
         turret.setPID(169);//default angle 
-        // TODO driven turret disable
         shooter.setRPM(0);
     }
     public void periodic() {

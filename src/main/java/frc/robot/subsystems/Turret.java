@@ -139,14 +139,11 @@ public class Turret extends SubsystemBase {
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         
-        String sameCorrectionFlag ="";
         if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*9){
                 setpoint-=360;
-                sameCorrectionFlag="125";
                 hasCorrectedPositive = true;
             }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*9){
                 setpoint+=360;
-                sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
             setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
@@ -172,7 +169,6 @@ public class Turret extends SubsystemBase {
         if(!beambreak.get()&&turret.getPosition().getValueAsDouble()>-7){
             turret.setPosition(19);
             hasEncoderReset=true;
-            // TODO driven turret disable
         }
        rotationCount=turret.getPosition().getValueAsDouble();
        
