@@ -416,8 +416,8 @@ public Pose2d getRobotPoseSOTM() {
         double dx = (hubPose.getX()-getRobotPose().plus(shooterTransform).getX());
         double dy = (hubPose.getY()-getRobotPose().plus(shooterTransform).getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
-       SmartDashboard.putNumber("angle to hub dx", dx);
-       SmartDashboard.putNumber("angle to hub dy", dy);
+       // SmartDashboard.putNumber("angle to hub dx", dx);
+       // SmartDashboard.putNumber("angle to hub dy", dy);
        SmartDashboard.putNumber("angle to hub", output);
         return output;
     }
@@ -573,10 +573,9 @@ public Pose2d getRobotPoseSOTM() {
         
         try {
             Optional<EstimatedRobotPose> cameraPoseEstimator = camera.getVisionBasedPose();
-            List<PhotonPipelineResult> targets = camera.getAllUnreadResults();
+            PhotonPipelineResult target = camera.getLatestResult();
 
-            if(!targets.isEmpty()){
-                PhotonPipelineResult target = targets.get(targets.size()-1);
+            if(target != null) {
 
                 if(target.hasTargets() && target.getBestTarget() != null) {
                     if(cameraPoseEstimator != null && cameraPoseEstimator.isPresent() && target.getBestTarget().getPoseAmbiguity() < 0.2) {
