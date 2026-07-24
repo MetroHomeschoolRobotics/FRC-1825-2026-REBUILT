@@ -1,15 +1,15 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.CANdi;
-import com.ctre.phoenix6.sim.CANdiSimState;
+// import com.ctre.phoenix6.hardware.CANdi;
+// import com.ctre.phoenix6.sim.CANdiSimState;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.simulation.PWMSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+// import edu.wpi.first.wpilibj.Notifier;
 
 public class Hood extends SubsystemBase {
     
@@ -23,9 +23,9 @@ public class Hood extends SubsystemBase {
     private PWMSim hood1Sim = new PWMSim(Constants.MotorIDs.hoodID1);
    // private CANdiSimState CANdiSim = new CANdiSimState(CANDi);
 
-    private static final double kSimLoopPeriod = 0.002; // 2 ms
-    private Notifier simNotifier = null;
-    private double lastSimTime = 0.0;
+    // private static final double kSimLoopPeriod = 0.002; // 2 ms
+    // private Notifier simNotifier = null;
+    // private double lastSimTime = 0.0;
     public Hood(){
         hood1.addFollower(hood2);
         

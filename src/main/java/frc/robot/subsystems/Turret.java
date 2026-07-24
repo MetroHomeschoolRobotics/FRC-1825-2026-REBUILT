@@ -100,11 +100,6 @@ public class Turret extends SubsystemBase {
         public double getGearedAngle(){
             //360/10 cuz gear ratios 
             double output; //= angle.getAbsolutePosition().getValueAsDouble()*36;
-            // if(output>18){
-            //     output-=36;
-            // }else if(output<-18){
-            //     output+=36;
-            // }
             output =rotationCount*9;
             return output+robotAngle;
 
@@ -119,15 +114,6 @@ public class Turret extends SubsystemBase {
         public static double getAbsoluteAngle(){
 
             double output =rotationCount*9;
-           
-            // if(output>180){
-            //     output-=360;
-            //     // rotationCount+=0.5;
-            // }else if(output<-180){
-                
-            //     output+=360;
-            //     // rotationCount-=0.5;
-            // }
             return output;
     }
     public void incrementTurretAngle(double input){
@@ -139,31 +125,14 @@ public class Turret extends SubsystemBase {
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         
-        String sameCorrectionFlag ="";
         if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*9){
                 setpoint-=360;
-                sameCorrectionFlag="125";
                 hasCorrectedPositive = true;
             }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*9){
                 setpoint+=360;
-                sameCorrectionFlag="-230";
                 hasCorrectedNegative=true;
             }
             setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
-        // if(getAbsoluteAngle()>=171){
-            
-        //         setpoint-=355.5;
-        //         hasCorrectedPositive = true;
-                
-        //     }else if(getAbsoluteAngle()<-184.5){
-               
-        //         setpoint+=355.5;
-        //         hasCorrectedNegative=true;
-        //     }
-        //     if(getAbsoluteAngle()<20&&getAbsoluteAngle()>-20){
-        //         hasCorrectedNegative=false;
-        //         hasCorrectedPositive=false;
-        //     }
         pid.setSetpoint(setpoint);
     }
     public void periodic(){
@@ -172,7 +141,6 @@ public class Turret extends SubsystemBase {
         if(!beambreak.get()&&turret.getPosition().getValueAsDouble()>-7){
             turret.setPosition(19);
             hasEncoderReset=true;
-            // TODO driven turret disable
         }
        rotationCount=turret.getPosition().getValueAsDouble();
        
@@ -197,7 +165,6 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("turret motor encoder ", turret.getPosition().getValueAsDouble());
         //0.37 to -9.63 90ish degrees to the right
         //-14.9 rightmost limit
-        //
         SmartDashboard.putNumber("setpoint minus angle", pid.getSetpoint()-robotAngle);
         SmartDashboard.putNumber("absolute angle", getAbsoluteAngle());
         SmartDashboard.putNumber("rotation count", rotationCountInt);
