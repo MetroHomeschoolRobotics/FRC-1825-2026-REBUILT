@@ -190,7 +190,7 @@ public class RobotContainer {
     }
     public void test(){
         SmartDashboard.putNumber("angleToHubContainer", angleToHubContainer);
-        SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+        // SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     public void startUp(){

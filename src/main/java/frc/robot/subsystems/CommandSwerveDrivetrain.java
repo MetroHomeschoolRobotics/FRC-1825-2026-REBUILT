@@ -99,8 +99,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private final Transform2d shooterTransform = new Transform2d(Units.inchesToMeters(-4.4), Units.inchesToMeters(-2), Rotation2d.kZero);
 
-     private final TagTracking FrontLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.frontLeftTranslation);
-    //private final TagTracking FrontRightCamera = new TagTracking("FrontRightCamera", Constants.CameraPositions.frontRightTranslation);
+     private final TagTracking RearLeftCamera = new TagTracking("angledCamera", Constants.CameraPositions.rearLeftTranslation);
+     private final TagTracking RearRightCamera = new TagTracking("Camera_Red", Constants.CameraPositions.rearRightTranslation);
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -416,8 +416,8 @@ public Pose2d getRobotPoseSOTM() {
         double dx = (hubPose.getX()-getRobotPose().plus(shooterTransform).getX());
         double dy = (hubPose.getY()-getRobotPose().plus(shooterTransform).getY());
         double output = Units.radiansToDegrees(Math.atan2(dy, dx));
-       SmartDashboard.putNumber("angle to hub dx", dx);
-       SmartDashboard.putNumber("angle to hub dy", dy);
+       // SmartDashboard.putNumber("angle to hub dx", dx);
+       // SmartDashboard.putNumber("angle to hub dy", dy);
        SmartDashboard.putNumber("angle to hub", output);
         return output;
     }
@@ -538,7 +538,24 @@ public Pose2d getRobotPoseSOTM() {
         }else if(hubTrackingSOTMEnabled){
             Turret.turretSetSetpoint(angleToHubSOTM()-rotation);
         }
-            addVisionPose(FrontLeftCamera);
+       
+        // if(FrontLeftCamera.tagOnScreen()&&!FrontRightCamera.tagOnScreen()){
+        //    addVisionPose(FrontLeftCamera);
+        // }else if(FrontRightCamera.tagOnScreen()&&!FrontLeftCamera.tagOnScreen()){
+        //    addVisionPose(FrontRightCamera);
+        // }else{
+
+        //     addVisionPose(FrontRightCamera);
+        addVisionPose(RearLeftCamera);
+        addVisionPose(RearRightCamera);
+       //} 
+       // Object stuff
+            // if(FrontRightCamera.hasTargets()){
+            //     Pose2d objectpose =FrontRightCamera.getObjectPose(getRobotPose());
+            //     SmartDashboard.putNumber("ObjectX", objectpose.getX());
+            //      SmartDashboard.putNumber("ObjectY", objectpose.getY());
+            // }
+
     }
    
 
@@ -548,10 +565,9 @@ public Pose2d getRobotPoseSOTM() {
         
         try {
             Optional<EstimatedRobotPose> cameraPoseEstimator = camera.getVisionBasedPose();
-            List<PhotonPipelineResult> targets = camera.getAllUnreadResults();
+            PhotonPipelineResult target = camera.getLatestResult();
 
-            if(!targets.isEmpty()){
-                PhotonPipelineResult target = targets.get(targets.size()-1);
+            if(target != null) {
 
                 if(target.hasTargets() && target.getBestTarget() != null) {
                     if(cameraPoseEstimator != null && cameraPoseEstimator.isPresent() && target.getBestTarget().getPoseAmbiguity() < 0.2) {

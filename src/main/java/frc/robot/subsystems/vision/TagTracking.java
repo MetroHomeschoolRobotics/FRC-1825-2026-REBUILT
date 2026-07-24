@@ -27,6 +27,7 @@ public class TagTracking extends SubsystemBase{
     private AprilTagFieldLayout aprilTagFieldLayout = Constants.FieldSetpoints.aprilTagFieldLayout;
     private PhotonCamera camera;
     private PhotonPoseEstimator photonPoseEstimator;
+    private PhotonPipelineResult latestResult = new PhotonPipelineResult();
  private List<PhotonPipelineResult> results;
  PhotonCameraSim cameraSim;// = new PhotonCameraSim(camera);
     VisionSystemSim visionSim; //= new VisionSystemSim("Camera Sim");
@@ -57,32 +58,34 @@ public class TagTracking extends SubsystemBase{
         }
       }
     public void periodic(){
-        results = camera.getAllUnreadResults();
+        latestResult = camera.getLatestResult();
     }
-    public List<PhotonPipelineResult> getAllUnreadResults() {
-    return results;
-  }
+  //   public List<PhotonPipelineResult> getAllUnreadResults() {
+  //   return results;
+  // }
   
 
   public PhotonPipelineResult getLatestResult() {
-    if(results.size()>0){
-      return results.get(results.size()-1); 
-    }
-    return new PhotonPipelineResult();
+    return latestResult;
   }
   public PhotonTrackedTarget getBestTarget() {
-    return getLatestResult().getBestTarget();
+    //return hasTargets() ? latestResult.getBestTarget() : null;
+    if (hasTargets()) {
+      return latestResult.getBestTarget();
+    }
+    else{
+      return null;
+    }
   }
 
   public Boolean hasTargets() {
-    if(!getAllUnreadResults().isEmpty()){
-      PhotonPipelineResult target = getAllUnreadResults().get(getAllUnreadResults().size()-1);
-
-      return target.hasTargets();
-    } else {
+    //return latestResult != null && latestResult.hasTargets();
+    if (latestResult != null && latestResult.hasTargets()) {
+      return true;
+    }
+    else {
       return false;
     }
-    
   }
 
   public double getYaw() {
