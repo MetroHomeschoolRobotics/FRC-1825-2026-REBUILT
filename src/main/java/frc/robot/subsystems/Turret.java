@@ -8,6 +8,8 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -76,8 +78,12 @@ public class Turret extends SubsystemBase {
                 private void setConfigs(){
                 config.CurrentLimits.StatorCurrentLimit = 40;
                 config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
-                config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
-                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
+                
+                //Testing CANdi
+                config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
+                config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
+                config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
+
                 config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
                 config.SoftwareLimitSwitch.ReverseSoftLimitThreshold=Constants.Setpoints.turretReverseSoftLimit;
         

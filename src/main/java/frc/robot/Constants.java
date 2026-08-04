@@ -24,11 +24,10 @@ public final class Constants {
 
         public static final int turretMotorID = 20;
         public static final int turretCANcoderID=22;
+        public static final int turretCANdi = 21; //Testing CANdi 
 
         public static final int hoodID1=0;
         public static final int hoodID2=1;//PWM channels
-
-        public static final int CANDiId = 25;
     }
    
     public static class MathConstants{
