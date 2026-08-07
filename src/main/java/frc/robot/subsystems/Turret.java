@@ -79,10 +79,15 @@ public class Turret extends SubsystemBase {
                 config.CurrentLimits.StatorCurrentLimit = 40;
                 config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
                 
-                //Testing CANdi
-                config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
-                config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
-                config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
+                // //Testing CANdi
+                // config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
+                // config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
+                // config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
+
+                // limits if you aren't using CANdi
+                config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
+                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
+
 
                 config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
                 config.SoftwareLimitSwitch.ReverseSoftLimitThreshold=Constants.Setpoints.turretReverseSoftLimit;
