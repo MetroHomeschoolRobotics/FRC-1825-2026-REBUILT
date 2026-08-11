@@ -146,6 +146,12 @@ public class Turret extends SubsystemBase {
             setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
         pid.setSetpoint(setpoint);
     }
+
+    public double CancoderAngle() {
+        return (turret.getPosition().getValueAsDouble()*9.125); //change 9.125 to a constant later
+        // 9.125 gives real life angles, but I don't know where that number comes from.
+    }
+
     public void periodic(){
         //DOES THIS WORK, IDK
         SmartDashboard.putBoolean("turret encoder reset", hasEncoderReset);
@@ -182,6 +188,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("geared angle", getGearedAngle());
         SmartDashboard.putNumber("setpoint turret", pid.getSetpoint());
         SmartDashboard.putBoolean("turret beambreak", !beambreak.get());
+        SmartDashboard.putNumber("Turret Cancoder", CancoderAngle());
 
     }
     public void simulationPeriodic(){
