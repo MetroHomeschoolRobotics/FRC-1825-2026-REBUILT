@@ -3,14 +3,19 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.S1CloseStateValue;
+import com.ctre.phoenix6.signals.S1FloatStateValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -35,14 +40,16 @@ import frc.robot.Constants;
 
 public class Turret extends SubsystemBase {
     
-    private static CANcoder angle = new CANcoder(Constants.MotorIDs.turretCANcoderID,"*");
-        private TalonFX turret = new TalonFX(Constants.MotorIDs.turretMotorID,"*");
+    private static CANcoder angle = new CANcoder(Constants.MotorIDs.turretCANcoderID, new CANBus("*"));
+        private TalonFX turret = new TalonFX(Constants.MotorIDs.turretMotorID, new CANBus("*"));
         
-        private DigitalInput beambreak = new DigitalInput(0);
+        //private DigitalInput beambreak = new DigitalInput(0);
+        private CANdi beambreak = new CANdi(Constants.MotorIDs.turretCANdi, new CANBus("*"));
         private static double robotAngle;
         private static double rotationCount = 0;
         private static int rotationCountInt = 0;
         private TalonFXConfiguration config = new TalonFXConfiguration();
+        private CANdiConfiguration beambreakConfig = new CANdiConfiguration();
        
         private boolean hasEncoderReset=false;
 
@@ -74,6 +81,7 @@ public class Turret extends SubsystemBase {
                 }
                     setConfigs();
                     turret.getConfigurator().apply(config);
+                    beambreak.getConfigurator().apply(beambreakConfig);
                 }
                 private void setConfigs(){
                 config.CurrentLimits.StatorCurrentLimit = 40;
@@ -91,6 +99,11 @@ public class Turret extends SubsystemBase {
 
                 config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
                 config.SoftwareLimitSwitch.ReverseSoftLimitThreshold=Constants.Setpoints.turretReverseSoftLimit;
+
+                // configure the CANdi
+                // The beamBreak is connected to S1 and requires a pull-up resistor
+                beambreakConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
+                beambreakConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
         
             }
                 public static void turretSetSetpoint(double _setpoint){
@@ -133,6 +146,11 @@ public class Turret extends SubsystemBase {
     public void setTurretEncoder(double position){
         turret.setPosition(position);
     }
+
+    public Boolean isBeamBroken() {
+        // return !beambreak.get();
+        return beambreak.getS1Closed().getValue();
+    }
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         
@@ -146,16 +164,10 @@ public class Turret extends SubsystemBase {
             setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
         pid.setSetpoint(setpoint);
     }
-
-    public double CancoderAngle() {
-        return (turret.getPosition().getValueAsDouble()*9.125); //change 9.125 to a constant later
-        // 9.125 gives real life angles, but I don't know where that number comes from.
-    }
-
     public void periodic(){
         //DOES THIS WORK, IDK
         SmartDashboard.putBoolean("turret encoder reset", hasEncoderReset);
-        if(!beambreak.get()&&turret.getPosition().getValueAsDouble()>-7){
+        if(isBeamBroken()&&turret.getPosition().getValueAsDouble()>-7){
             turret.setPosition(19);
             hasEncoderReset=true;
         }
@@ -187,8 +199,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("rotation count", rotationCountInt);
         SmartDashboard.putNumber("geared angle", getGearedAngle());
         SmartDashboard.putNumber("setpoint turret", pid.getSetpoint());
-        SmartDashboard.putBoolean("turret beambreak", !beambreak.get());
-        SmartDashboard.putNumber("Turret Cancoder", CancoderAngle());
+        SmartDashboard.putBoolean("turret beambreak", isBeamBroken());
 
     }
     public void simulationPeriodic(){
