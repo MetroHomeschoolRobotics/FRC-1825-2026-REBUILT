@@ -8,11 +8,9 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
@@ -28,7 +26,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -164,11 +161,19 @@ public class Turret extends SubsystemBase {
             setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
         pid.setSetpoint(setpoint);
     }
+
+    public double CancoderAngle() {
+        return (angle.getPosition().getValueAsDouble()*36); //Change to a variable later
+    }
+
+
     public void periodic(){
         //DOES THIS WORK, IDK
         SmartDashboard.putBoolean("turret encoder reset", hasEncoderReset);
         if(isBeamBroken()&&turret.getPosition().getValueAsDouble()>-7){
             turret.setPosition(19);
+            // angle.setPosition(5); //180*(10/360)
+            angle.setPosition(4.75); //171*(10/360)
             hasEncoderReset=true;
         }
        rotationCount=turret.getPosition().getValueAsDouble();
@@ -187,6 +192,7 @@ public class Turret extends SubsystemBase {
             turret.set(output);
         }
         
+        
        
       
         SmartDashboard.putBoolean("has corrected negative", hasCorrectedNegative);
@@ -200,6 +206,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("geared angle", getGearedAngle());
         SmartDashboard.putNumber("setpoint turret", pid.getSetpoint());
         SmartDashboard.putBoolean("turret beambreak", isBeamBroken());
+        SmartDashboard.putNumber("Turret Cancoder", CancoderAngle());
 
     }
     public void simulationPeriodic(){
