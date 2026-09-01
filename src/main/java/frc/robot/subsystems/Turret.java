@@ -11,6 +11,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
@@ -85,13 +87,13 @@ public class Turret extends SubsystemBase {
                 config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
                 
                 // //Testing CANdi
-                // config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
-                // config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
-                // config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
+                config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
+                config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
+                config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
 
                 // limits if you aren't using CANdi
-                config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
-                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
+                // config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
+                // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
 
 
                 config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
@@ -113,6 +115,10 @@ public class Turret extends SubsystemBase {
             
             robotAngle = angle+45;
         }
+        public double CancoderAngle() {
+            return (angle.getPosition().getValueAsDouble()*Constants.gearRatios.turretDegreesPerCanCoderRevolution); //Change to a variable later
+        }
+
         /**use the cancoder position with the 10:1 gear ratio to get the actual angle,
          * it also adds the robot angle
          * 
@@ -120,8 +126,8 @@ public class Turret extends SubsystemBase {
          */
         public double getGearedAngle(){
             //360/10 cuz gear ratios 
-            double output; //= angle.getAbsolutePosition().getValueAsDouble()*36;
-            output =rotationCount*9;
+            double output = CancoderAngle();
+            // output =rotationCount*Constants.gearRatios.turretDegreesPerMotorRevolution;
             return output+robotAngle;
 
         }
@@ -132,9 +138,10 @@ public class Turret extends SubsystemBase {
         public void setPID(double angle){
             pid.setSetpoint(angle);
         }
-        public static double getAbsoluteAngle(){
+        public double getAbsoluteAngle(){
 
-            double output =rotationCount*9;
+            double output = CancoderAngle();
+            // double output =rotationCount*Constants.gearRatios.turretDegreesPerMotorRevolution;
             return output;
     }
     public void incrementTurretAngle(double input){
@@ -151,21 +158,16 @@ public class Turret extends SubsystemBase {
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         
-        if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*9){
+        if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution){
                 setpoint-=360;
                 hasCorrectedPositive = true;
-            }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*9){
+            }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution){
                 setpoint+=360;
                 hasCorrectedNegative=true;
             }
-            setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*9, Constants.Setpoints.turretForwardSoftLimit*9);
+            setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution, Constants.Setpoints.turretForwardSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution);
         pid.setSetpoint(setpoint);
     }
-
-    public double CancoderAngle() {
-        return (angle.getPosition().getValueAsDouble()*36); //Change to a variable later
-    }
-
 
     public void periodic(){
         //DOES THIS WORK, IDK

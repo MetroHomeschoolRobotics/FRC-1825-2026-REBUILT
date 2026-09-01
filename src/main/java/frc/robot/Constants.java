@@ -30,6 +30,11 @@ public final class Constants {
         public static final int hoodID2=1;//PWM channels
     }
    
+    public static class gearRatios {
+        public static final double turretDegreesPerMotorRevolution = 360/(10*4); // 360 degrees; 40:1 gear ratio
+        public static final double turretDegreesPerCanCoderRevolution = 360/10; // 360 degrees; 10:1 gear ratio
+    }
+
     public static class MathConstants{
         public static final double hoodRotationsPerDegree=1.0;
 
