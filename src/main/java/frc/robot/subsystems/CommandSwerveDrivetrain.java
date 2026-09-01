@@ -515,7 +515,7 @@ public Pose2d getRobotPoseSOTM() {
         }
         
         field.setRobotPose(getRobotPose());
-        fieldSOTM.setRobotPose(hubPose);
+        fieldSOTM.setRobotPose(getRobotPoseSOTM());
         SmartDashboard.putData("Field",getField2d());
         SmartDashboard.putData("FieldSOTM",getField2dSOTM());
         double rotation= getRobotPose().getRotation().getDegrees()+143;

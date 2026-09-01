@@ -87,7 +87,7 @@ public final class Constants {
         public static final double defaultHoodAngle = 58.337;
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
-        public static final double retractorRetractSpeed = 0.7;
+        public static final double retractorRetractSpeed = 0.2;
         public static final double indexerSpeed = 0.5;
         public static final double beltSpeed = 1;
         public static final double intakeSpeed = 0.4;

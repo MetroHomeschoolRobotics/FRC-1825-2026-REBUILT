@@ -14,7 +14,7 @@ public class FlickerIntakeUp extends Command{
         timer = 0;
     }
     public void execute(){
-        if(timer%20<8){
+        if(timer%20<4){
             intake.setRetractorSpeed(Constants.Setpoints.retractorRetractSpeed);
         }else{
             intake.setRetractorSpeed(0);
