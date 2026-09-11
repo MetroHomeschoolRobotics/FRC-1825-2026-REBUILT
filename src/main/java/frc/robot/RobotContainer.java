@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.commands.AutoSetInterpolatedShooterRPM;
 import frc.robot.commands.ChangeTurretMode;
+import frc.robot.commands.DefaultDriving;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToFeed;
 import frc.robot.commands.FlickerIntakeUp;
@@ -98,14 +99,8 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX((Math.pow(-driverXbox.getLeftY(),3)) * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive forward with negative Y (forward)
-                    .withVelocityY((Math.pow(-driverXbox.getLeftX(),3)) * MaxSpeed*(manipulatorXbox.leftBumper().getAsBoolean() ? .75:1)) // Drive left with negative X (left)
-                    .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+        drivetrain.setDefaultCommand( new DefaultDriving(drivetrain, driverXbox, manipulatorXbox)); 
+        // Drivetrain will execute this command periodically
        driverXbox.x().whileTrue(new DriveToFeed(drivetrain));
         driverXbox.rightBumper().whileTrue((drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
         .withVelocityY(-driverXbox.getLeftY()).withHeadingPID(11.13,0,0.169)
