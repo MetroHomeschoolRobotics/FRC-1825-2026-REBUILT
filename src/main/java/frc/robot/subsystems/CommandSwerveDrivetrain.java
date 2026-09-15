@@ -90,7 +90,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private boolean hubTrackingEnabled = false;
     private boolean passingModeEnabled = false;
-    private boolean hubTrackingSOTMEnabled = false;
+    public boolean hubTrackingSOTMEnabled = false;
     private Pose2d hubPose;
     private InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 

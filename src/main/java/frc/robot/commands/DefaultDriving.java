@@ -6,9 +6,12 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.Predicate;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,11 +29,15 @@ public class DefaultDriving extends Command {
  private Double FilteredLeftX;
  private Double FilteredLeftY;
  private Double FilteredRightX;
+ private Double AccelerationLimit;
+ private Double PreviousLeftX;
+ private Double PreviousLeftY;
+ private Double PreviousRightX;
  private CommandXboxController manipulatorXbox;
 
- SlewRateLimiter filter = new SlewRateLimiter(5);
- SlewRateLimiter filter2 = new SlewRateLimiter(5);
- SlewRateLimiter filter3 = new SlewRateLimiter(5);
+//  SlewRateLimiter filter = new SlewRateLimiter(5);
+//  SlewRateLimiter filter2 = new SlewRateLimiter(5);
+//  SlewRateLimiter filter3 = new SlewRateLimiter(5);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
     .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -47,18 +54,34 @@ public class DefaultDriving extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    PreviousLeftX = 0.0;
+    PreviousLeftY = 0.0;
+    PreviousRightX = 0.0;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    FilteredLeftY = filter.calculate(-driverXbox.getLeftY());
-    FilteredLeftX = filter2.calculate(-driverXbox.getLeftX());
-    FilteredRightX = filter3.calculate(-driverXbox.getRightX());
+
+    if (drivetrain.hubTrackingSOTMEnabled) {
+      AccelerationLimit = 1.0/50;
+    }
+    else {
+      AccelerationLimit = 3.5/50;
+    }
+
+
+    FilteredLeftX = MathUtil.clamp(Math.pow(-driverXbox.getLeftX(),3), PreviousLeftX-AccelerationLimit, PreviousLeftX+AccelerationLimit);
+    PreviousLeftX = FilteredLeftX;
+    FilteredLeftY = MathUtil.clamp(Math.pow(-driverXbox.getLeftY(),3), PreviousLeftY-AccelerationLimit, PreviousLeftY+AccelerationLimit);
+    PreviousLeftY = FilteredLeftY;
+    FilteredRightX = MathUtil.clamp(Math.pow(-driverXbox.getRightX(),3), PreviousRightX-AccelerationLimit, PreviousRightX+AccelerationLimit);
+    PreviousRightX = FilteredRightX;
 
     drivetrain.setControl(
-      drive.withVelocityX((Math.pow(FilteredLeftY,3)) * MaxSpeed) // Drive forward with negative Y (forward)
-        .withVelocityY((Math.pow(FilteredLeftX,3)) * MaxSpeed) // Drive left with negative X (left)
+      drive.withVelocityX((FilteredLeftY) * MaxSpeed) // Drive forward with negative Y (forward)
+        .withVelocityY((FilteredLeftX) * MaxSpeed) // Drive left with negative X (left)
         .withRotationalRate(FilteredRightX * MaxAngularRate) // Drive counterclockwise with negative X (left)
     );
 
