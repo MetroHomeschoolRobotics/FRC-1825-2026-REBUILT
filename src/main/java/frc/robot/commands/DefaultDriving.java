@@ -29,7 +29,11 @@ public class DefaultDriving extends Command {
  private Double FilteredLeftX;
  private Double FilteredLeftY;
  private Double FilteredRightX;
+ private Double LimitedLeftX;
+ private Double LimitedLeftY;
+ private Double LimitedRightX;
  private Double AccelerationLimit;
+ private Double SpeedLimit;
  private Double PreviousLeftX;
  private Double PreviousLeftY;
  private Double PreviousRightX;
@@ -65,18 +69,25 @@ public class DefaultDriving extends Command {
   public void execute() {
 
     if (drivetrain.hubTrackingSOTMEnabled) {
-      AccelerationLimit = 1.0/50;
+      AccelerationLimit = 2.0/50;
+      SpeedLimit = 0.6;
     }
     else {
       AccelerationLimit = 3.5/50;
+      SpeedLimit = 1.0;
     }
 
+    LimitedLeftX = MathUtil.clamp(-driverXbox.getLeftX(), -SpeedLimit, SpeedLimit);
+    LimitedLeftY = MathUtil.clamp(-driverXbox.getLeftY(), -SpeedLimit, SpeedLimit);
+    LimitedRightX = -driverXbox.getRightX();
+    //LimitedRightX = MathUtil.clamp(-driverXbox.getRightX(), -SpeedLimit, SpeedLimit);
 
-    FilteredLeftX = MathUtil.clamp(Math.pow(-driverXbox.getLeftX(),3), PreviousLeftX-AccelerationLimit, PreviousLeftX+AccelerationLimit);
+
+    FilteredLeftX = MathUtil.clamp(Math.pow(LimitedLeftX,3), PreviousLeftX-AccelerationLimit, PreviousLeftX+AccelerationLimit);
     PreviousLeftX = FilteredLeftX;
-    FilteredLeftY = MathUtil.clamp(Math.pow(-driverXbox.getLeftY(),3), PreviousLeftY-AccelerationLimit, PreviousLeftY+AccelerationLimit);
+    FilteredLeftY = MathUtil.clamp(Math.pow(LimitedLeftY,3), PreviousLeftY-AccelerationLimit, PreviousLeftY+AccelerationLimit);
     PreviousLeftY = FilteredLeftY;
-    FilteredRightX = MathUtil.clamp(Math.pow(-driverXbox.getRightX(),3), PreviousRightX-AccelerationLimit, PreviousRightX+AccelerationLimit);
+    FilteredRightX = MathUtil.clamp(Math.pow(LimitedRightX,3), PreviousRightX-AccelerationLimit, PreviousRightX+AccelerationLimit);
     PreviousRightX = FilteredRightX;
 
     drivetrain.setControl(
