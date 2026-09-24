@@ -184,7 +184,7 @@ public class Turret extends SubsystemBase {
       
         double output = pid.calculate(getAbsoluteAngle());
 
-        output = MathUtil.clamp(output, -.3, .3);
+        output = MathUtil.clamp(output, -Constants.PIDConstants.turretMaxPower, Constants.PIDConstants.turretMaxPower);
          if(turret.getPosition().getValueAsDouble()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
             output=0;
         }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
