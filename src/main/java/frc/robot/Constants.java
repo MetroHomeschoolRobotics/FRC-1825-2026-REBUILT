@@ -87,7 +87,7 @@ public final class Constants {
         public static final double defaultHoodAngle = 58.337;
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
-        public static final double retractorRetractSpeed = 0.2;
+        public static final double retractorRetractSpeed = 0.3;
         public static final double indexerSpeed = 0.5;
         public static final double beltSpeed = 1;
         public static final double intakeSpeed = 0.4;
@@ -145,12 +145,12 @@ public final class Constants {
         public static final double hoodI =0; // % output / (degree * second)
         public static final double hoodD =0; // % output / (degree / second)
 
-        public static final double shooterP = 0.000205; // % output / RPM error
+        public static final double shooterP = 0.0003; // % output / RPM error
         public static final double shooterI = 0.00;//12; // % output / (RPM * second)
         public static final double shooterD= 0.000000145;//14; // % output  / (RPM / second) ALSO (% output * second) / RPM 
 
         public static final double shooterKs = 0; // % Output (constant)
-        public static final double shooterKv = 0.000166; // 1/6000, % Output / RPM
+        public static final double shooterKv = 0.0001694; // 1/5900, % Output / RPM
         public static final double shooterKa = 0; // % output / (RPM*second)
         
         public static final double turretP = 0.02; // % output / degree
