@@ -84,7 +84,7 @@ public final class Constants {
  
     }
     public static class Setpoints{
-        public static final double defaultHoodAngle = 58.337;
+        public static final double defaultHoodAngle = 0.0;//58.337;
         public static final double passingHoodAngle = 45;
         public static final double retractorDeploySpeed = -0.3;
         public static final double retractorRetractSpeed = 0.3;
@@ -156,7 +156,7 @@ public final class Constants {
         public static final double turretP = 0.02; // % output / degree
         public static final double turretI = 0.000; // % output / (degree * second)
         public static final double turretD = 0; // % output / (degree / second)
-        public static final double turretMaxPower = 0.3; // clamps output of PID
+        public static final double turretMaxPower = 0.5; // clamps output of PID
     }
     public static class CameraPositions {
         // X is defined as forward and Y is defined as left. 

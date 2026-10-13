@@ -4,7 +4,7 @@ package frc.robot.subsystems;
 // import com.ctre.phoenix6.sim.CANdiSimState;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.simulation.PWMSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,42 +16,47 @@ public class Hood extends SubsystemBase {
     
     
     //private CANdi CANDi= new CANdi(Constants.MotorIDs.CANDiId); 
-    private Spark hood1 = new Spark(Constants.MotorIDs.hoodID1);
-    private Spark hood2 = new Spark(Constants.MotorIDs.hoodID2);
+    private Servo hood1 = new Servo(Constants.MotorIDs.hoodID1);
+    private Servo hood2 = new Servo(Constants.MotorIDs.hoodID2);
     private PIDController pid = new PIDController(Constants.PIDConstants.hoodP, Constants.PIDConstants.hoodI, Constants.PIDConstants.hoodD);
 
     private PWMSim hood1Sim = new PWMSim(Constants.MotorIDs.hoodID1);
+    private double CorrectedSetpoint;
    // private CANdiSimState CANdiSim = new CANdiSimState(CANDi);
 
     // private static final double kSimLoopPeriod = 0.002; // 2 ms
     // private Notifier simNotifier = null;
     // private double lastSimTime = 0.0;
     public Hood(){
-        hood1.addFollower(hood2);
+        //hood1.addFollower(hood2);
         
     }
     public void setSpeed(double speed){
-        hood1.set(speed);
+        //hood1.set(speed);
        
     }
-    public void setPID(double setPoint){
-        pid.setSetpoint(setPoint);
-        
+    public void setSetpoint(double setPoint){
+        //pid.setSetpoint(setPoint);
+        // setPoint comes in as a value from -1 to 1
+        // Convert that into a value from 0 to 1
+        CorrectedSetpoint = (setPoint+1)/6;
+        hood1.set(CorrectedSetpoint);
+        hood2.set(CorrectedSetpoint);
     }
     public double getAngle(){
        // return Constants.Setpoints.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)
-        return 0;
+        return hood1.get();
     }
     public double getPwmPosition(){
        // return CANDi.getPWM1Position().getValueAsDouble();
        return 0;
     }
-    
 
     public void periodic(){
-        double output = pid.calculate(getAngle());
-        setSpeed(output);
-        hood1Sim.setSpeed(output);
+        //double output = pid.calculate(getAngle());
+        //setSpeed(output);
+        //hood1Sim.setSpeed(output);
+        SmartDashboard.putNumber("hood angle", getAngle());
         
     }
     public void simulationPeriodic(){

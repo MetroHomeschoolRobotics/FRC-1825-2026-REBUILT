@@ -82,6 +82,7 @@ public class RobotContainer {
     public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
     //public final directdriveturrret incrementTurretAngle = new directdriveturrret(turret, manipulatorXbox);//IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
+    //public final SetHoodAngle hoodAngle = new SetHoodAngle(hood, manipulatorXbox);
     private final AutoChooser autoChooser = new AutoChooser();
     private final AutoFactory autoFactory;
     private double angleToHubContainer = 0;
@@ -100,6 +101,7 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand( new DefaultDriving(drivetrain, driverXbox, manipulatorXbox)); 
+        hood.setDefaultCommand(new SetHoodAngle(hood, manipulatorXbox));
         // Drivetrain will execute this command periodically
        driverXbox.x().whileTrue(new DriveToFeed(drivetrain));
         driverXbox.rightBumper().whileTrue((drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
@@ -143,7 +145,7 @@ public class RobotContainer {
         // Actually start shooter, into the hub
         manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer))); 
         // Starts the turret and hood tracking the hub       
-        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetHoodAngle(hood, Constants.Setpoints.defaultHoodAngle)).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
+        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
         // Starts the turret and hood tracking the alliance wall
         manipulatorXbox.x().whileTrue(new RunIntakeBackwards(intake));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.NEUTRAL));
@@ -189,7 +191,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     public void startUp(){
-        hood.setPID(Constants.Setpoints.defaultHoodAngle);
+        hood.setSetpoint(Constants.Setpoints.defaultHoodAngle);
         turret.setPID(169);//default angle 
         shooter.setRPM(0);
     }
