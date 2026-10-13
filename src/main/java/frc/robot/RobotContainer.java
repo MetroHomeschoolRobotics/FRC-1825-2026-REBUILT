@@ -38,6 +38,7 @@ import frc.robot.commands.DefaultDriving;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToFeed;
 import frc.robot.commands.FlickerIntakeUp;
+import frc.robot.commands.IncrementHoodAngle;
 import frc.robot.commands.IncrementShooterRPM;
 import frc.robot.commands.IncrementTurretAngle;
 import frc.robot.commands.RetractIntake;
@@ -82,7 +83,6 @@ public class RobotContainer {
     public final IncrementTurretAngle incrementTurretAngle = new IncrementTurretAngle(turret, manipulatorXbox);
     //public final directdriveturrret incrementTurretAngle = new directdriveturrret(turret, manipulatorXbox);//IncrementTurretAngle(turret, manipulatorXbox);
     public final IncrementShooterRPM incrementShooterRPM = new IncrementShooterRPM(shooter, manipulatorXbox);
-    //public final SetHoodAngle hoodAngle = new SetHoodAngle(hood, manipulatorXbox);
     private final AutoChooser autoChooser = new AutoChooser();
     private final AutoFactory autoFactory;
     private double angleToHubContainer = 0;
@@ -101,7 +101,7 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand( new DefaultDriving(drivetrain, driverXbox, manipulatorXbox)); 
-        hood.setDefaultCommand(new SetHoodAngle(hood, manipulatorXbox));
+        hood.setDefaultCommand(new IncrementHoodAngle(hood, manipulatorXbox));
         // Drivetrain will execute this command periodically
        driverXbox.x().whileTrue(new DriveToFeed(drivetrain));
         driverXbox.rightBumper().whileTrue((drivetrain.applyRequest(()->point.withVelocityX(-driverXbox.getLeftX())
