@@ -44,7 +44,7 @@ public class DefaultDriving extends Command {
 //  SlewRateLimiter filter3 = new SlewRateLimiter(5);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-    .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+    .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.025) // Add a 2.5% deadband (after cubing)
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
   public DefaultDriving(CommandSwerveDrivetrain _drivetrain, CommandXboxController _driverXbox, CommandXboxController _manipulatorXbox) {
