@@ -143,22 +143,22 @@ public class RobotContainer {
         driverXbox.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         // Actually start shooter, into the hub
-        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter).andThen(new RunFullIndexing(indexer))); 
+        manipulatorXbox.y().whileTrue(new SetInterpolatedShooterRPM(drivetrain, shooter, hood).andThen(new RunFullIndexing(indexer))); 
         // Starts the turret and hood tracking the hub       
-        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter))); 
+        manipulatorXbox.a().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUB).andThen(new SetInterpolatedShooterRPM(drivetrain,shooter, hood))); 
         // Starts the turret and hood tracking the alliance wall
         manipulatorXbox.x().whileTrue(new RunIntakeBackwards(intake));
         manipulatorXbox.b().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.NEUTRAL));
        
         manipulatorXbox.povRight().whileTrue(new ChangeTurretMode(drivetrain, Constants.TurretMode.HUBSOTM)
-        .andThen(new SetInterpolatedShooterRPMSOTM(drivetrain,shooter))
+        .andThen(new SetInterpolatedShooterRPMSOTM(drivetrain,shooter, hood))
         .alongWith(new SequentialCommandGroup(Commands.waitSeconds(0.7),new RunFullIndexing(indexer))));
 
         manipulatorXbox.rightBumper().whileTrue(new RunIntake(intake));
         
         //interpolation setter that never ends
         //Spins up the shooter to shooter into the hub, but doesn't run the indexer
-        manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter));
+        manipulatorXbox.leftBumper().whileTrue(new AutoSetInterpolatedShooterRPM(drivetrain, shooter, hood));
         //Runs the indexer
         manipulatorXbox.leftTrigger().whileTrue(new RunFullIndexing(indexer));
         //turns the retractor on and off on a .2 sec interval

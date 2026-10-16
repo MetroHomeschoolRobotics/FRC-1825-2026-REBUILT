@@ -111,32 +111,41 @@ public final class Constants {
     public static class InterpolationData{
       
         public static final double[] inputs = {
-            1.07,//0
+            1.50,//0
             2.02,//1
-            2.55,//2
-            2.68,//3
-            2.91,//4
-            3.22,//5
-            3.65,//6
-            3.85,//7
-            4.64,//8
-            5.3, //9
-            5.7 //10
+            2.50,//2
+            3.0,//3
+            3.52,//4
+            4.03,//5
+            4.47,//6
+            5.02,//7
+            5.51,//8
+            6.03, //9
         };
-        private static double rpmdrop = 200;
-        public static final double[] outputs = {
-           2885-rpmdrop,//0
-           3224-rpmdrop,//1
-           3427-rpmdrop,//2
-           3537-rpmdrop,//3
-           3781-rpmdrop,//4
-           3873-rpmdrop,//5
-           4149-rpmdrop,//6
-           4222-rpmdrop,//7
-           4764-rpmdrop,//8
-           5132-rpmdrop,//9
-           5750-rpmdrop,//10
-           
+        private static double rpmdrop = 0;
+        public static final double[] RPM = {
+           2750-rpmdrop,//0
+           2900-rpmdrop,//1
+           3100-rpmdrop,//2
+           3300-rpmdrop,//3
+           3450-rpmdrop,//4
+           3600-rpmdrop,//5
+           3725-rpmdrop,//6
+           3850-rpmdrop,//7
+           4200-rpmdrop,//8
+           4350-rpmdrop,//9
+        };
+        public static final double[] HoodAngles = {
+            0.0,//0
+            0.0,//1
+            0.0,//2
+            0.245,//3
+            0.29,//4
+            0.31,//5
+            0.333,//6
+            0.333,//7
+            0.333,//8
+            0.333//9
         };
         
     }

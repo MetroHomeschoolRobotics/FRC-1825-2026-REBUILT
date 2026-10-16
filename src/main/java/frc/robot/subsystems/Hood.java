@@ -38,7 +38,7 @@ public class Hood extends SubsystemBase {
     public void setSetpoint(double setPoint){
         //pid.setSetpoint(setPoint);
         // setPoint comes in as a value from -1 to 1
-        // Convert that into a value from 0 to 1
+        // Convert that into a value from 0 to 0.3333
         CorrectedSetpoint = (setPoint+1)/6;
         hood1.set(CorrectedSetpoint);
         hood2.set(CorrectedSetpoint);

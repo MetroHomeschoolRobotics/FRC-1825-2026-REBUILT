@@ -34,7 +34,8 @@ public class Shooter extends SubsystemBase{
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.PIDConstants.shooterKs, Constants.PIDConstants.shooterKv, Constants.PIDConstants.shooterKa);
     
     private double desiredVelocity = 0;
-    private InterpolatingDoubleTreeMap interpolation = new InterpolatingDoubleTreeMap();
+    private InterpolatingDoubleTreeMap RPMinterpolation = new InterpolatingDoubleTreeMap();
+    private InterpolatingDoubleTreeMap HoodAngleInterpolation = new InterpolatingDoubleTreeMap();
     private TalonFX shooter1 = new TalonFX(Constants.MotorIDs.shooterMotorID1,"rio");
     private TalonFX shooter2 = new TalonFX(Constants.MotorIDs.shooterMotorID2,"rio");
     
@@ -59,9 +60,11 @@ public class Shooter extends SubsystemBase{
         shooter2.getConfigurator().apply(config);
         pid.setTolerance(50);
          double[] inputs = Constants.InterpolationData.inputs;
-         double[] outputs = Constants.InterpolationData.outputs;
+         double[] RPM = Constants.InterpolationData.RPM;
+         double[] HoodAngles = Constants.InterpolationData.HoodAngles;
         for (int i = 0 ; i<inputs.length;i++) {
-            interpolation.put(inputs[i], outputs[i]);
+            RPMinterpolation.put(inputs[i], RPM[i]);
+            HoodAngleInterpolation.put(inputs[i], HoodAngles[i]);
         } 
         if(Utils.isSimulation()){
             startSimThread();
@@ -73,10 +76,18 @@ public class Shooter extends SubsystemBase{
         config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
     }
     public double getInterpolatedRPM(double distToHub){
-        double targetRPM = interpolation.get(distToHub);
+        double targetRPM = RPMinterpolation.get(distToHub);
         return targetRPM;
     }
 
+    public double getInterpolatedHoodAngle(double distToHub) {
+        double targetHoodAngle = HoodAngleInterpolation.get(distToHub);
+        return targetHoodAngle;
+    }
+    //This method should really live in the hood subsystem
+    //Feel free to move if you want to
+
+    
     public void setSpeed(double speed){
         shooter1.set(speed);
         shooter2.set(-speed);
