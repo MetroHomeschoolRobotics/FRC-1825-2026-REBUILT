@@ -191,7 +191,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("interpolated rpm", shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     public void startUp(){
-        hood.setSetpoint(Constants.Setpoints.defaultHoodAngle);
+        hood.setSetpointJoystick(Constants.Setpoints.defaultHoodAngle);
         turret.setPID(169);//default angle 
         shooter.setRPM(0);
     }

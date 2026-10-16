@@ -32,7 +32,7 @@ public class SetHoodAngle extends Command {
   @Override
   public void execute() {
     angle = xbox.getRightY();
-    hood.setSetpoint(angle);
+    hood.setSetpointJoystick(angle);
   }
 
   // Called once the command ends or is interrupted.

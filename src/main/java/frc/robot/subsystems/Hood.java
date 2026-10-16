@@ -35,13 +35,20 @@ public class Hood extends SubsystemBase {
         //hood1.set(speed);
        
     }
+
     public void setSetpoint(double setPoint){
-        //pid.setSetpoint(setPoint);
+        hood1.set(setPoint);
+        hood2.set(setPoint);
+    }
+    public void setSetpointJoystick(double setPoint) {
+        CorrectedSetpoint = (setPoint+1)/6;
         // setPoint comes in as a value from -1 to 1
         // Convert that into a value from 0 to 0.3333
-        CorrectedSetpoint = (setPoint+1)/6;
-        hood1.set(CorrectedSetpoint);
-        hood2.set(CorrectedSetpoint);
+        setSetpoint(CorrectedSetpoint);
+    }
+    public void setSetpointDirect(double setPoint) {
+        // Use this one if the value comes in from 0 to 0.33
+        setSetpoint(setPoint);
     }
     public double getAngle(){
        // return Constants.Setpoints.defaultHoodAngle-(CANDi.getPWM1Position().getValueAsDouble()*Constants.MathConstants.hoodRotationsPerDegree)

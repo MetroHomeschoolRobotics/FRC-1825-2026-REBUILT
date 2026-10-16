@@ -28,10 +28,10 @@ public class SetInterpolatedShooterRPM extends Command {
     public void execute(){
            if(DriverStation.getAlliance().orElse(Alliance.Red)==Alliance.Blue){
             shooter.setRPM(shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose)));
-            hood.setSetpoint( (shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose))-0.5)*2);
+            hood.setSetpointDirect( (shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose))));
         }else{
         shooter.setRPM(shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
-        hood.setSetpoint( (shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose))-0.5)*2);
+        hood.setSetpointDirect((shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose))));
     }
     }
     

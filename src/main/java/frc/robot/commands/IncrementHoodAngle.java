@@ -38,7 +38,7 @@ public class IncrementHoodAngle extends Command {
     }
     setpoint = setpoint+increment;
     setpoint = MathUtil.clamp(setpoint, -1, 1);
-    hood.setSetpoint(setpoint);
+    hood.setSetpointJoystick(setpoint);
   }
 
   // Called once the command ends or is interrupted.

@@ -344,8 +344,6 @@ final double flightTime = timeOfFlight.get(distanceToPoseSOTM(hubPose)); // seco
     );
 }
 public Pose2d getRobotPoseSOTM() {
-    final double flightTime = timeOfFlight.get(distanceToPose(hubPose)); // seconds
-
     // getState().Speeds is robot-relative — convert to field-relative
     // using the robot's current heading
     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
@@ -353,18 +351,30 @@ public Pose2d getRobotPoseSOTM() {
         this.getState().Pose.getRotation()
     );
 
+    final double flightTime = timeOfFlight.get(distanceToPose(hubPose)); // seconds
+
     // Multiply velocity (m/s) by time (s) to get a position offset (m)
     Translation2d velocityOffset = new Translation2d(
         fieldRelativeSpeeds.vxMetersPerSecond * flightTime,
         fieldRelativeSpeeds.vyMetersPerSecond * flightTime
     );
-
-    // Add the offset to the current pose's translation
-    // Rotation stays the same — we're offsetting position, not heading
-    return new Pose2d(
+    final Pose2d SOTMpose = new Pose2d(
         this.getState().Pose.getTranslation().plus(velocityOffset),
         this.getState().Pose.getRotation()
     );
+    // Do it all again from the new pose because you actually want the flight time from
+    // the calculated pose, not the original pose.
+    double distanceToHub = SOTMpose.getTranslation().getDistance(hubPose.getTranslation());
+    final double flightTime2 = timeOfFlight.get(distanceToHub);
+    Translation2d velocityOffset2 = new Translation2d(
+        fieldRelativeSpeeds.vxMetersPerSecond * flightTime2,
+        fieldRelativeSpeeds.vyMetersPerSecond * flightTime2
+    );
+    final Pose2d SOTMpose2 = new Pose2d(
+        this.getState().Pose.getTranslation().plus(velocityOffset2),
+        this.getState().Pose.getRotation()
+    );
+    return SOTMpose2;
 }
 
     public Field2d getField2d(){

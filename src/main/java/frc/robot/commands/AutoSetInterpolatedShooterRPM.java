@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -22,16 +23,19 @@ public class AutoSetInterpolatedShooterRPM extends Command {
         addRequirements(_shooter);
         addRequirements(_hood);
     }
+
     public void initialize(){
       }
     public void execute(){
            if(DriverStation.getAlliance().orElse(Alliance.Red)==Alliance.Blue){
             shooter.setRPM(shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose)));
-            hood.setSetpoint( (shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose))-0.5)*2);
+            hood.setSetpointDirect( (shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.blueHubPose))));
         }else{
         shooter.setRPM(shooter.getInterpolatedRPM(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
-        hood.setSetpoint( (shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose))-0.5)*2);
+        hood.setSetpointDirect((shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose))));
     }
+    SmartDashboard.putNumber("Command distance to Pose", drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose));
+    SmartDashboard.putNumber("Command interpolated hood angle", shooter.getInterpolatedHoodAngle(drivetrain.distanceToPose(Constants.FieldSetpoints.redHubPose)));
     }
     
     public boolean isFinished(){
