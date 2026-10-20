@@ -81,6 +81,25 @@ public class Turret extends SubsystemBase {
                     setConfigs();
                     turret.getConfigurator().apply(config);
                     beambreak.getConfigurator().apply(beambreakConfig);
+                    
+                    // Shamelessly stolen from Gemini
+                    double kBeambreakAbs = -0.25; // Measured emperically
+
+                    // 2. Define your 36-degree startup wedge in CANcoder rotations (degrees / 36.0)
+                    // -18 deg to 18 deg, centered on 0 deg
+                    double minWedgeRotations = -18 / 36.0; 
+                    double maxWedgeRotations = minWedgeRotations + 1.0;
+
+                    // 3. Read absolute position, align it with the 4.75 beambreak reference, and wrap into the wedge
+                    double rawAbsRotations = angle.getAbsolutePosition().waitForUpdate(0.1).getValueAsDouble();
+                    double alignedRotations = rawAbsRotations - kBeambreakAbs + 4.75;
+                    double seededCancoderRotations = MathUtil.inputModulus(alignedRotations, minWedgeRotations, maxWedgeRotations);
+                    SmartDashboard.putNumber("turretSector" , Math.round(seededCancoderRotations / 36));
+
+                    angle.setPosition(seededCancoderRotations);
+                    turret.setPosition(seededCancoderRotations * 4.0); // 40:1 motor / 10:1 CANcoder = 4.0
+                    hasEncoderReset = true;
+                    // Commented this out for now until we test that it works 
                 }
                 private void setConfigs(){
                 config.CurrentLimits.StatorCurrentLimit = 40;
@@ -185,6 +204,7 @@ public class Turret extends SubsystemBase {
         double output = pid.calculate(getAbsoluteAngle());
 
         output = MathUtil.clamp(output, -Constants.PIDConstants.turretMaxPower, Constants.PIDConstants.turretMaxPower);
+        //TODO make this reference the angle object and not the turret object
          if(turret.getPosition().getValueAsDouble()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
             output=0;
         }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
