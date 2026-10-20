@@ -205,9 +205,9 @@ public class Turret extends SubsystemBase {
 
         output = MathUtil.clamp(output, -Constants.PIDConstants.turretMaxPower, Constants.PIDConstants.turretMaxPower);
         //TODO make this reference the angle object and not the turret object
-         if(turret.getPosition().getValueAsDouble()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
+         if(getAbsoluteAngle()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
             output=0;
-        }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
+        }else if(getAbsoluteAngle()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
             output=0;
         }
         if(hasEncoderReset){
@@ -236,9 +236,9 @@ public class Turret extends SubsystemBase {
         angleSim.addPosition((leaderMotorTurretSim.getAngularVelocityRPM()/60)/50);
         fixSetpoint();
         double output = pid.calculate(getAbsoluteAngle());
-        if(turret.getPosition().getValueAsDouble()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
+        if(getAbsoluteAngle()>=Constants.Setpoints.turretForwardSoftLimit&&output>0){
             output=0;
-        }else if(turret.getPosition().getValueAsDouble()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
+        }else if(getAbsoluteAngle()<Constants.Setpoints.turretReverseSoftLimit&&output<0){
             output=0;
         }
         output = MathUtil.clamp(output, -.15, .15);
