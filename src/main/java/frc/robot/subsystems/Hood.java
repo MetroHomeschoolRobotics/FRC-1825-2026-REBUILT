@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
+
 // import com.ctre.phoenix6.hardware.CANdi;
 // import com.ctre.phoenix6.sim.CANdiSimState;
 
@@ -37,6 +39,13 @@ public class Hood extends SubsystemBase {
     }
 
     public void setSetpoint(double setPoint){
+        setPoint = setPoint + 0.2;
+        if (setPoint >= 0.33) {
+            setPoint = 0.33;
+        }
+        // Based on how the servo class works with the actuonix
+        // fully in to fully out on the actuanix relates to 2/9 to 7/9 in the servo class
+        // So 0.22 on the servo corelates with fully in on the actuonix
         hood1.set(setPoint);
         hood2.set(setPoint);
     }

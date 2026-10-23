@@ -106,13 +106,13 @@ public class Turret extends SubsystemBase {
                 config.MotorOutput.Inverted =InvertedValue.CounterClockwise_Positive;
                 
                 // //Testing CANdi
-                config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
-                config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
-                config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
+                // config.HardwareLimitSwitch.ForwardLimitRemoteSensorID=Constants.MotorIDs.turretCANdi;
+                // config.HardwareLimitSwitch.ForwardLimitSource=ForwardLimitSourceValue.RemoteCANdiS1;
+                // config.HardwareLimitSwitch.ForwardLimitType=ForwardLimitTypeValue.NormallyOpen;
 
                 // limits if you aren't using CANdi
-                // config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
-                // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
+                config.SoftwareLimitSwitch.ForwardSoftLimitEnable=true;
+                config.SoftwareLimitSwitch.ForwardSoftLimitThreshold=Constants.Setpoints.turretForwardSoftLimit;
 
 
                 config.SoftwareLimitSwitch.ReverseSoftLimitEnable=true;
@@ -172,7 +172,8 @@ public class Turret extends SubsystemBase {
 
     public Boolean isBeamBroken() {
         // return !beambreak.get();
-        return beambreak.getS1Closed().getValue();
+        // return beambreak.getS1Closed().getValue();
+        return false;
     }
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
