@@ -23,7 +23,7 @@ public final class Constants {
         public static final int beltID = 19;
 
         public static final int turretMotorID = 20;
-        public static final int turretCANcoderID=22;
+        public static final int turretCANcoderID=22;    
         public static final int turretCANdi = 21; //Testing CANdi 
 
         public static final int hoodID1=0;
@@ -125,7 +125,7 @@ public final class Constants {
         private static double rpmdrop = 0;
         public static final double[] RPM = {
            2750-rpmdrop,//0
-           2900-rpmdrop,//1
+           2925-rpmdrop,//1
            3100-rpmdrop,//2
            3300-rpmdrop,//3
            3450-rpmdrop,//4

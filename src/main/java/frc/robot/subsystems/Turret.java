@@ -83,7 +83,7 @@ public class Turret extends SubsystemBase {
                     beambreak.getConfigurator().apply(beambreakConfig);
                     
                     // Shamelessly stolen from Gemini
-                    double kBeambreakAbs = -0.25; // Measured emperically
+                    double kBeambreakAbs = -0.11; // Measured emperically
 
                     // 2. Define your 36-degree startup wedge in CANcoder rotations (degrees / 36.0)
                     // -18 deg to 18 deg, centered on 0 deg
@@ -178,14 +178,14 @@ public class Turret extends SubsystemBase {
     /**this treats 0 as facing the intake, the shooter starts facing 125 (125 degrees CW) */
     public void fixSetpoint(){
         
-        if(setpoint>=Constants.Setpoints.turretForwardSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution){
+        if(setpoint>=Constants.Setpoints.turretForwardSoftLimit){
                 setpoint-=360;
                 hasCorrectedPositive = true;
-            }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution){
+            }else if(setpoint<Constants.Setpoints.turretReverseSoftLimit){
                 setpoint+=360;
                 hasCorrectedNegative=true;
             }
-            setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution, Constants.Setpoints.turretForwardSoftLimit*Constants.gearRatios.turretDegreesPerMotorRevolution);
+            setpoint=MathUtil.clamp(setpoint, Constants.Setpoints.turretReverseSoftLimit, Constants.Setpoints.turretForwardSoftLimit);
         pid.setSetpoint(setpoint);
     }
 
